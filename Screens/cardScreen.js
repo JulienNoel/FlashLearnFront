@@ -1,0 +1,314 @@
+import * as React from "react";
+import * as Speech from "expo-speech";
+import { connect } from "react-redux";
+import { useState, useEffect } from "react";
+import {
+  Text,
+  View,
+  Image,
+  StyleSheet,
+  Button,
+  TouchableOpacity,
+  ActivityIndicator,
+  Modal,
+  Pressable,
+} from "react-native";
+
+import { FontAwesome } from "@expo/vector-icons";
+import RecordScreen from "./recordScreen";
+import { REACT_APP_KEY } from "@env";
+
+export function CardScreen(props) {
+  const [traduction, setTraduction] = useState("");
+  const [wordNumber, setWordNumber] = useState(1);
+  const [listExe, setListExe] = useState([]);
+  const [exerciceNbr, setExerciceNbr] = useState(1);
+  const [transcripted, setTranscripted] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isFinished, setIsFinished] = useState(false)
+  
+
+  useEffect(() => {
+    async function loadExercice() {
+      var rawResponse = await fetch(
+        `https://flashlearnapp.herokuapp.com/exercice`
+      );
+      var response = await rawResponse.json();
+      var objectResponse = response.result;
+
+      props.addExercice(objectResponse);
+      setListExe(objectResponse);
+    }
+    loadExercice();
+  }, [props.langue]);
+
+  useEffect(() => {
+    async function loadTranslate() {
+      var rawResponse = await fetch(
+        "https://translation.googleapis.com/language/translate/v2/",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `q=${exerciceList[wordNumber]}&target=${props.langue}&format=text&source=fr&modele=base&key=${REACT_APP_KEY}`,
+        }
+      );
+      var response = await rawResponse.json();
+
+      setTraduction(response.data.translations[0].translatedText.toLowerCase());
+    }
+    loadTranslate();
+  }, [wordNumber, listExe]);
+
+  const recordTranscription = (transcription) => {
+    console.log("props", transcription);
+    setTranscripted(transcription);
+  };
+
+  let filtreExercice = listExe.filter((e) => e.exerciceId == exerciceNbr);
+  filtreExercice = filtreExercice[0];
+
+  const exerciceMax = props.route.params.nbrEx / 5;
+  
+  let exerciceList = [];
+
+  for (var word in filtreExercice) {
+    exerciceList.push(filtreExercice[word]);
+  }
+  exerciceList.splice(0, 1);
+  console.log(exerciceList)
+
+  const speak = () => {
+    const thingToSay = traduction;
+    Speech.speak(thingToSay, { language: props.langue, rate: 0.7, pitch: 0.9 });
+  };
+
+  const listLangues = [
+    {
+      language: "Anglais",
+      langAbrev: "en",
+      image: require("../assets/royaume-uni.png"),
+    },
+    {
+      language: "Italien",
+      langAbrev: "it",
+      image: require("../assets/italie.png"),
+    },
+    {
+      language: "Espagnol",
+      langAbrev: "es",
+      image: require("../assets/espagne.png"),
+    },
+    {
+      language: "Thailandais",
+      langAbrev: "th",
+      image: require("../assets/thailande.png"),
+    },
+    {
+      language: "Portugais",
+      langAbrev: "pt",
+      image: require("../assets/le-portugal.png"),
+    },
+  ];
+  let filtreLanguage = listLangues.filter((e) => e.langAbrev === props.langue);
+
+  let resultTranscription;
+  if (transcripted == traduction) {
+    resultTranscription = <Text>Bravo</Text>;
+  }
+
+
+  const exerciceCount = () => {
+    
+    setWordNumber(wordNumber + 1);    
+
+    if (wordNumber > 4 && exerciceMax >= exerciceNbr) {
+      setExerciceNbr(exerciceNbr + 1);
+      setWordNumber(1);
+      
+    }
+    if (exerciceNbr == exerciceMax && wordNumber == 5) {
+      setModalVisible(true);
+      setIsFinished(true)
+      setWordNumber(5)
+      setExerciceNbr(exerciceNbr)           
+    }    
+    
+  };
+
+  const exerciceFinished = () => {
+    setModalVisible(!modalVisible)
+    setExerciceNbr(1)
+    setWordNumber(1)
+    props.navigation.navigate('stat')
+  }
+  
+  // if(isFinished) {
+  //   displayFR = exerciceList[5]
+  // }
+  console.log('max',exerciceMax)
+  console.log('exonbr', exerciceNbr)
+
+  let displayTrad;
+
+  if (exerciceList[wordNumber] == undefined) {
+    displayTrad = <ActivityIndicator size="large" color="#9fa8da" />;
+  } else {
+    displayTrad = traduction;
+  }
+
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <View
+        style={{
+          width: "80%",
+          height: "40%",
+          justifyContent: "space-evenly",
+          borderWidth: 3,
+          borderRadius: 25,
+          borderColor: "blue",
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <View style={{ marginRight: 15, marginLeft: 15 }}>
+            <Image
+              style={{ height: 60, width: 60 }}
+              source={filtreLanguage[0].image}
+            />
+            <Text>{filtreLanguage[0].language}</Text>
+          </View>
+          <Text style={{ fontSize: 28, marginBottom: 20 }}>{displayTrad}</Text>
+        </View>
+        <View style={{ alignItems: "center", justifyContent: "center" }}>
+          <FontAwesome
+            name="volume-up"
+            size={40}
+            color="black"
+            onPress={speak}
+          />
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <View style={{ marginRight: 15, marginLeft: 15 }}>
+            <Image
+              style={{ height: 60, width: 60 }}
+              source={require("../assets/la-france.png")}
+            />
+            <Text>Français</Text>
+          </View>
+          <Text style={{ fontSize: 28, marginBottom: 20 }}>
+            {exerciceList[wordNumber]}
+          </Text>
+        </View>
+      </View>
+
+      <View
+        style={{
+          flexDirection: "row-reverse",
+          width: "80%",
+          height: "25%",
+          alignItems: "center",
+          justifyContent: "space-evenly",
+        }}
+      >
+        <RecordScreen transcriptionParent={recordTranscription} />
+        <TouchableOpacity>
+          <FontAwesome
+            name="check-circle"
+            size={100}
+            color="green"
+            onPress={exerciceCount}
+          />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.centeredView}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Bravo!</Text>
+              <Text style={styles.modalText}>Bravo! Vous avez fini les exercices !!</Text>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={exerciceFinished}
+              >
+                <Text style={styles.textStyle}>Continuer</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+      </View>
+    </View>
+  );
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    addExercice: function (exe) {
+      dispatch({ type: "addExercice", exercice: exe });
+    },
+  };
+}
+
+function mapStateToProps(state) {
+  return { langue: state.languageSelect, exo: state.exercice };
+}
+
+const styles = StyleSheet.create({
+  centeredView: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(CardScreen);

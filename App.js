@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from './Screens/homeScreen'
 import StatScreen from './Screens/statScreen';
 import CardScreen from './Screens/cardScreen';
+import StartScreen from './Screens/startScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -65,9 +66,11 @@ export default function App() {
     
     <Provider store={store}>
       <NavigationContainer>      
-        <Stack.Navigator screenOptions={{headerShown: false}}>          
+        <Stack.Navigator screenOptions={{headerShown: false}}> 
+          <Stack.Screen name="start" component={StartScreen} />          
           <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
-          <Stack.Screen name="card" component={CardScreen} />          
+          <Stack.Screen name="card" component={CardScreen} />
+                   
         </Stack.Navigator>     
       </NavigationContainer>
     </Provider>

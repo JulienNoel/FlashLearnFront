@@ -7,7 +7,9 @@ import { FontAwesome } from "@expo/vector-icons";
 import { connect } from "react-redux";
 
 export function RecordScreen(props) {
+  
   const [recording, setRecording] = useState();
+  
 
   async function startRecording() {
     try {
@@ -49,6 +51,8 @@ export function RecordScreen(props) {
     setRecording(undefined);
     await recording.stopAndUnloadAsync();
     const uri = recording.getURI();
+    
+    
     console.log("Recording stopped and stored at", uri);
 
     const data = new FormData();
@@ -69,7 +73,10 @@ export function RecordScreen(props) {
     if (response.result) {
       props.transcriptionParent(response.transcription);
     }
+
   }
+  
+  
 
   return (
     <View>
@@ -81,6 +88,7 @@ export function RecordScreen(props) {
           onPress={recording ? stopRecording : startRecording}
         />
       </TouchableOpacity>
+      
     </View>
   );
 }

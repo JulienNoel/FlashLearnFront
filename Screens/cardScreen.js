@@ -79,7 +79,7 @@ export function CardScreen(props) {
 
   const speak = () => {
     const thingToSay = traduction;
-    Speech.speak(thingToSay, { language: props.langue, rate: 0.7, pitch: 0.9 });
+    Speech.speak(thingToSay, { language: props.langue, rate: 0.5, pitch: 0.9 });
   };
 
   const listLangues = [
@@ -163,9 +163,11 @@ export function CardScreen(props) {
           width: "80%",
           height: "40%",
           justifyContent: "space-evenly",
-          borderWidth: 3,
-          borderRadius: 25,
-          borderColor: "blue",
+          borderWidth: 2,
+          borderRadius: 20,
+          borderColor: "lightgray",       
+          
+          
         }}
       >
         <View
@@ -220,6 +222,7 @@ export function CardScreen(props) {
         }}
       >
         <RecordScreen transcriptionParent={recordTranscription} />
+        {transcripted == traduction? <Text>Bravo</Text>:null}
         <TouchableOpacity>
           <FontAwesome
             name="check-circle"

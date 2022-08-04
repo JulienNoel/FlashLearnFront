@@ -1,16 +1,38 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
 import { StyleSheet, Text, View, Image, Animated } from 'react-native';
 
-export default function StartScreen () {
+export default function StartScreen (props) {
 
-    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const [isLoad, setIsLoad] = useState(false) 
 
-    
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 2000,
-          useNativeDriver: false,
-        }).start();
+   
+     const fadeAnim = useRef(new Animated.Value(0)).current;
+
+     Animated.timing(fadeAnim, {
+      toValue: 1.1,
+      duration: 2000,
+      useNativeDriver: true,
+    }).start();
+
+    useEffect(()=>{      
+      
+      const timer = setTimeout(()=>{
+        setIsLoad(true)
+      }, 2000)
+      return () => clearTimeout(timer);
+      
+    },[])
+         
+    useEffect(()=>{      
+      
+      if(isLoad) {
+        props.navigation.navigate('BottomNavigator', {screen: 'home'})
+        setIsLoad(false)
+    }
+      
+    },[isLoad])    
+   
       
 
     return (
@@ -25,10 +47,15 @@ export default function StartScreen () {
 
 }
 
+
+  
+
 const styles = StyleSheet.create({
     logo: {
         width: 200,
         height: 200,        
-    },
+    }
     
   });
+
+  

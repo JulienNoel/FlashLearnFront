@@ -3,6 +3,7 @@ export default function(listExercice = [], action) {
         
     var listExerciceCopy = [...listExercice]
         listExerciceCopy.push(action.exercice)
+       
         
       return listExerciceCopy;
     } else {

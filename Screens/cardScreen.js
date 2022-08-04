@@ -19,7 +19,7 @@ import RecordScreen from "./recordScreen";
 import { REACT_APP_KEY } from "@env";
 
 export function CardScreen(props) {
-  const [traduction, setTraduction] = useState("");
+  const [traduction, setTraduction] = useState(null);
   const [wordNumber, setWordNumber] = useState(1);
   const [listExe, setListExe] = useState([]);
   const [exerciceNbr, setExerciceNbr] = useState(1);
@@ -149,11 +149,11 @@ export function CardScreen(props) {
   console.log('exonbr', exerciceNbr)
 
   let displayTrad;
-
-  if (exerciceList[wordNumber] == undefined) {
-    displayTrad = <ActivityIndicator size="large" color="#9fa8da" />;
-  } else {
+  console.log('test', traduction)
+  if (traduction) {
     displayTrad = traduction;
+  } else {
+    displayTrad = <ActivityIndicator size="large" color="#9fa8da" />;
   }
 
   return (

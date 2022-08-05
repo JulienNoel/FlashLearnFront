@@ -1,8 +1,8 @@
 import React from 'react'
 import {connect} from 'react-redux';
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { Avatar } from "@rneui/themed";
+
 
 import { AntDesign } from '@expo/vector-icons';
 
@@ -11,9 +11,12 @@ import { AntDesign } from '@expo/vector-icons';
 export function HomeScreen (props) {
 
 const [nbreMots, setNbreMots] = useState(5)
-const [hello, setHello] = useState('Bonjour')
+const [hello, setHello] = useState('BONJOUR')
 const [combiendeMots, setCombiendeMots] = useState('Combien de Mots voulez-vous apprendre ?')
 const [selection, setSelection] = useState('')
+
+
+
 
 var changeNbrPlus = () => {
     
@@ -103,15 +106,10 @@ var displayLang = listLangues.map((lang, i) => {
 
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start' }}>
     
-        <View style={{justifyContent: 'space-evenly', alignItems: 'flex-start', width: '90%', height: '25%', paddingLeft: 30, paddingTop: 30
+        <View style={{justifyContent: 'space-evenly', alignItems: 'center', width: '100%', height: '20%', paddingTop: 30, backgroundColor: '#9fa8da'
                         }}>
-        <Avatar
-            size={64}
-            rounded
-            title="JN"
-            containerStyle={{ backgroundColor: '#3d4db7' }}
-            />
-        <Text style={{fontSize: 25}}>{hello} Juju</Text>
+        
+        <Text style={{fontSize: 35, color: 'white', fontFamily: 'Roboto'}}>{hello}</Text>
         </View>
 
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', width: '90%'}}>

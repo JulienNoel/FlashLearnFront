@@ -60,7 +60,7 @@ export function CardScreen(props) {
   }, [wordNumber, listExe]);
 
   const recordTranscription = (transcription) => {
-    console.log("props", transcription);
+    console.log("transcription", transcription);
     setTranscripted(transcription);
   };
 
@@ -145,13 +145,12 @@ export function CardScreen(props) {
   // if(isFinished) {
   //   displayFR = exerciceList[5]
   // }
-  console.log('max',exerciceMax)
-  console.log('exonbr', exerciceNbr)
+  
 
   let displayTrad;
-  console.log('test', traduction)
-  if (traduction) {
-    displayTrad = traduction;
+  console.log('test', filtreExercice)
+  if (exerciceList.length > 0 ) {
+    displayTrad = traduction
   } else {
     displayTrad = <ActivityIndicator size="large" color="#9fa8da" />;
   }
@@ -244,7 +243,7 @@ export function CardScreen(props) {
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text style={styles.modalText}>Bravo!</Text>
-              <Text style={styles.modalText}>Bravo! Vous avez fini les exercices !!</Text>
+              <Text style={styles.modalText}>Vous avez fini les exercices !!</Text>
               <Pressable
                 style={[styles.button, styles.buttonClose]}
                 onPress={exerciceFinished}

@@ -59,7 +59,7 @@ export default function StartScreen (props) {
       
     },[isLoad])    
    
-    //AsyncStorage.clear()  
+     
 
     return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#9fa8da'}}>

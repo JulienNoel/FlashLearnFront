@@ -14,6 +14,7 @@ import HomeScreen from './Screens/homeScreen'
 import StatScreen from './Screens/statScreen';
 import CardScreen from './Screens/cardScreen';
 import StartScreen from './Screens/startScreen';
+import LogScreen from './Screens/logScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -67,7 +68,7 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>      
         <Stack.Navigator screenOptions={{headerShown: false}}> 
-          <Stack.Screen name="start" component={StartScreen} />          
+          <Stack.Screen name="start" component={LogScreen} />          
           <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
           <Stack.Screen name="card" component={CardScreen} />
                    

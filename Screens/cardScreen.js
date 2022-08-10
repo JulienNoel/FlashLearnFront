@@ -136,10 +136,15 @@ export function CardScreen(props) {
   };
 
   const exerciceFinished = () => {
-    setModalVisible(!modalVisible)
-    setExerciceNbr(1)
-    setWordNumber(1)
-    props.navigation.navigate('stat')
+      setModalVisible(!modalVisible)
+      setExerciceNbr(1)
+      setWordNumber(1)
+    if (props.token) {      
+      props.navigation.navigate('stat')
+    }else {
+      props.navigation.navigate('signup')
+    }
+    
   }
   
   // if(isFinished) {
@@ -267,7 +272,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 function mapStateToProps(state) {
-  return { langue: state.languageSelect, exo: state.exercice };
+  return { langue: state.languageSelect, exo: state.exercice, token: state.token };
 }
 
 const styles = StyleSheet.create({

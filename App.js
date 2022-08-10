@@ -4,6 +4,7 @@ import {createStore, combineReducers}  from 'redux';
 
 import languageSelect from './reducers/language.reducer'
 import exercice from './reducers/exercice.reducer'
+import token from './reducers/token.reducer'
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -19,7 +20,7 @@ import LogScreen from './Screens/logScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
-const store = createStore(combineReducers({languageSelect, exercice}));
+const store = createStore(combineReducers({languageSelect, exercice, token}));
 
 
 function BottomNavigator () {
@@ -68,10 +69,10 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>      
         <Stack.Navigator screenOptions={{headerShown: false}}> 
-          <Stack.Screen name="start" component={LogScreen} />          
+          <Stack.Screen name="start" component={StartScreen} />          
           <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
           <Stack.Screen name="card" component={CardScreen} />
-                   
+          <Stack.Screen name="signup" component={LogScreen} />         
         </Stack.Navigator>     
       </NavigationContainer>
     </Provider>

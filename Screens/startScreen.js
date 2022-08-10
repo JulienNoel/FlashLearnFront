@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { StyleSheet, Text, View, Image, Animated } from 'react-native';
 
@@ -62,14 +63,18 @@ export default function StartScreen (props) {
      
 
     return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#9fa8da'}}>
+      <LinearGradient        
+      colors={['#9fa8da', '#6e7fd1', '#4f14b5']}
+      style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}
+    >
+    
     <Animated.View style={{transform: [{scale: fadeAnim}], opacity: fadeAnim}}>
         <Image
         style={styles.logo}
         source={require('../assets/logo.png')}
         />
     </Animated.View>
-    </View>)
+    </LinearGradient>)
 
 }
 

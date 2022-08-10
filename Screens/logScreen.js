@@ -1,17 +1,18 @@
-import React, {useState} from 'react'
-import { StyleSheet, TextInput, View, TouchableOpacity, Text, Image, KeyboardAvoidingView, useWindowDimensions } from 'react-native';
+import React, {useState, useEffect} from 'react'
+import {connect} from 'react-redux';
+import { StyleSheet, TextInput, View, TouchableOpacity, Text, Image, KeyboardAvoidingView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-export default function LogScreen () {
+export function LogScreen (props) {
 
     const [pseudo, setPseudo] = useState('')
     const [mail, setMail] = useState ('')
     const [password, setPassword] = useState('')
 
-    useEffect(()=>{      
-       async function registerUser() {
+         
+    const registerUser = async () => {
          var rawResponse = await fetch(
            `http://192.168.0.12:3000/signup`, {
           method: "POST",
@@ -23,15 +24,13 @@ export default function LogScreen () {
          var objectResponse = response.result;
          var objectUser = response.user
         
-          if (response.result) {
-            const localStorageToken = AsyncStorage.setItem("token", objectUser.token)
-          
+          if (objectResponse) {
+             AsyncStorage.setItem("token", objectUser.token)
+             props.addToken(objectUser.token)
+             props.navigation.navigate('BottomNavigator', {screens: 'home'})
           }         
        }
-       registerUser();      
-      
-     },[]) 
-   
+             
 
     return (
         
@@ -70,7 +69,7 @@ export default function LogScreen () {
         secureTextEntry={true}
       />
       
-      <TouchableOpacity onPress={() => console.log('ok')} style={styles.btn}>
+      <TouchableOpacity onPress={registerUser} style={styles.btn}>
             <Text style={styles.btnTxt}>SIGN UP</Text>
         </TouchableOpacity>
     </View> 
@@ -79,6 +78,16 @@ export default function LogScreen () {
     )
 
 }
+
+function mapDispatchToProps(dispatch) {
+  return {
+    addToken: function (token) {
+      dispatch({ type: "addToken", token: token });
+    },
+  };
+}
+
+export default connect(null, mapDispatchToProps)(LogScreen);
 
 const styles = StyleSheet.create({
     container: {
@@ -117,3 +126,4 @@ const styles = StyleSheet.create({
     }
     
   });
+

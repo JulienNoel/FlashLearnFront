@@ -27,7 +27,19 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/faviconflashlearn.png"
+    },
+    "notification":{
+      "icon": "./assets/faviconflashlearn.png"
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/faviconflashlearn.png",
+          "color": "#ffffff"          
+        }
+      ]
+    ]
   }
 }

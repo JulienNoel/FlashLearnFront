@@ -16,7 +16,7 @@ import StatScreen from './Screens/statScreen';
 import CardScreen from './Screens/cardScreen';
 import StartScreen from './Screens/startScreen';
 import LogScreen from './Screens/logScreen';
-import NotificationScreen from './Screens/notificationsScreen';
+
 
 
 const Tab = createBottomTabNavigator();

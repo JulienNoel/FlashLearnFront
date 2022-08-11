@@ -17,6 +17,15 @@ import {
 import { FontAwesome } from "@expo/vector-icons";
 import RecordScreen from "./recordScreen";
 import { REACT_APP_KEY } from "@env";
+import * as Notifications from 'expo-notifications';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 export function CardScreen(props) {
   const [traduction, setTraduction] = useState(null);
@@ -58,6 +67,25 @@ export function CardScreen(props) {
     }
     loadTranslate();
   }, [wordNumber, listExe]);
+
+  const timeInterval = [600,86400,172800,604800] 
+  const timeIntervalTest = [2,6,15]
+
+  async function schedulePushNotification(time) {
+  
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "🔍 Rappel FlashLearn!",
+        body: 'juju',        
+      },
+      trigger: { seconds: time}
+      
+    });
+    // await Notifications.dismissAllNotificationsAsync()
+    // await Notifications.cancelAllScheduledNotificationsAsync()
+  }
+
+
 
   const recordTranscription = (transcription) => {
     console.log("transcription", transcription);
@@ -143,6 +171,9 @@ export function CardScreen(props) {
       props.navigation.navigate('stat')
     }else {
       props.navigation.navigate('signup')
+    }
+    for (let timeSetting of timeIntervalTest) {
+      schedulePushNotification(timeSetting)
     }
     
   }

@@ -68,9 +68,7 @@ export function CardScreen(props) {
         var response = await rawResponse.json();
           
         setTraduction(response.data.translations[0].translatedText.toLowerCase());
-        setNotifTxt(arr => {
-          return [...arr, traduction]
-        })
+        
       }
       
     }
@@ -141,6 +139,7 @@ export function CardScreen(props) {
   }
 
 
+
   let tradList = notifTxt.filter(el => el != null)
   let recapNotif = exerciceListFR.reduce((acc, el, i) => {
     return [...acc, {fr: el, trad: tradList[i]}]
@@ -151,7 +150,8 @@ export function CardScreen(props) {
   })
   
 
-  async function schedulePushNotification(time) {    
+  async function schedulePushNotification(time) {
+    
   
     await Notifications.scheduleNotificationAsync({
       content: {
@@ -171,7 +171,9 @@ export function CardScreen(props) {
   const exerciceCount = () => {
     
     setWordNumber(wordNumber + 1);    
-
+    setNotifTxt(arr => {
+      return [...arr, traduction]
+    })
     if (wordNumber > 4 && exerciceMax >= exerciceNbr) {
       setExerciceNbr(exerciceNbr + 1);
       setWordNumber(0);
@@ -198,7 +200,7 @@ export function CardScreen(props) {
     for (let timeSetting of timeIntervalTest) {
       schedulePushNotification(timeSetting)
     }
-    
+    setNotifTxt([])
   }
   
   // if(isFinished) {

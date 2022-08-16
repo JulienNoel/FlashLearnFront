@@ -154,7 +154,8 @@ var displayLang = listLangues.map((lang, i) => {
                             justifyContent: 'center',
                             alignItems: 'center',                            
                             borderRadius: 100,
-                            backgroundColor: '#dad19f',}}>
+                            backgroundColor: '#dad19f',
+                            }}>
                     <Text style={{fontSize: 15, color: 'white'}}>GO</Text>
                 </TouchableOpacity>
             </View>

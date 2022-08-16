@@ -28,13 +28,15 @@ Notifications.setNotificationHandler({
 });
 
 export function CardScreen(props) {
+  
   const [traduction, setTraduction] = useState(null);
-  const [wordNumber, setWordNumber] = useState(1);
+  const [wordNumber, setWordNumber] = useState(0);
   const [listExe, setListExe] = useState([]);
   const [exerciceNbr, setExerciceNbr] = useState(1);
   const [transcripted, setTranscripted] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [isFinished, setIsFinished] = useState(false)
+  const [notifTxt, setNotifTxt] = useState([])
   
 
   useEffect(() => {
@@ -53,17 +55,24 @@ export function CardScreen(props) {
 
   useEffect(() => {
     async function loadTranslate() {
-      var rawResponse = await fetch(
-        "https://translation.googleapis.com/language/translate/v2/",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `q=${exerciceList[wordNumber]}&target=${props.langue}&format=text&source=fr&modele=base&key=${REACT_APP_KEY}`,
-        }
-      );
-      var response = await rawResponse.json();
+      if (exerciceListFR.length > 0) {
 
-      setTraduction(response.data.translations[0].translatedText.toLowerCase());
+        var rawResponse = await fetch(
+          "https://translation.googleapis.com/language/translate/v2/",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `q=${exerciceListFR[wordNumber]}&target=${props.langue}&format=text&source=fr&modele=base&key=${REACT_APP_KEY}`,
+          }
+        );
+        var response = await rawResponse.json();
+          
+        setTraduction(response.data.translations[0].translatedText.toLowerCase());
+        setNotifTxt(arr => {
+          return [...arr, traduction]
+        })
+      }
+      
     }
     loadTranslate();
   }, [wordNumber, listExe]);
@@ -71,22 +80,9 @@ export function CardScreen(props) {
   const timeInterval = [600,86400,172800,604800] 
   const timeIntervalTest = [2,6,15]
 
-  async function schedulePushNotification(time) {
+  console.log('notiftxt', notifTxt)
   
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "🔍 Rappel FlashLearn!",
-        body: 'juju',        
-      },
-      trigger: { seconds: time}
-      
-    });
-    // await Notifications.dismissAllNotificationsAsync()
-    // await Notifications.cancelAllScheduledNotificationsAsync()
-  }
-
-
-
+  
   const recordTranscription = (transcription) => {
     console.log("transcription", transcription);
     setTranscripted(transcription);
@@ -97,13 +93,13 @@ export function CardScreen(props) {
 
   const exerciceMax = props.route.params.nbrEx / 5;
   
-  let exerciceList = [];
+  let exerciceListFR = [];
 
-  for (var word in filtreExercice) {
-    exerciceList.push(filtreExercice[word]);
+  for (let word in filtreExercice) {
+    exerciceListFR.push(filtreExercice[word]);
   }
-  exerciceList.splice(0, 1);
-  console.log(exerciceList)
+  exerciceListFR.splice(0,2);
+  console.log(exerciceListFR)
 
   const speak = () => {
     const thingToSay = traduction;
@@ -145,19 +141,46 @@ export function CardScreen(props) {
   }
 
 
+  let tradList = notifTxt.filter(el => el != null)
+  let recapNotif = exerciceListFR.reduce((acc, el, i) => {
+    return [...acc, {fr: el, trad: tradList[i]}]
+  }, [])
+  
+  let displayNotif = recapNotif.map((el, i) =>{
+    return `FR: ${el.fr}, ${props.langue.toUpperCase()}: ${el.trad}\n`
+  })
+  
+
+  async function schedulePushNotification(time) {    
+  
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "🔍 Rappel FlashLearn!",
+        body: `${displayNotif}`        
+      },
+      trigger: { seconds: time}
+      
+    });
+    // await Notifications.dismissAllNotificationsAsync()
+    // await Notifications.cancelAllScheduledNotificationsAsync()
+  }
+  
+
+
+
   const exerciceCount = () => {
     
     setWordNumber(wordNumber + 1);    
 
     if (wordNumber > 4 && exerciceMax >= exerciceNbr) {
       setExerciceNbr(exerciceNbr + 1);
-      setWordNumber(1);
+      setWordNumber(0);
       
     }
-    if (exerciceNbr == exerciceMax && wordNumber == 5) {
+    if (exerciceNbr == exerciceMax && wordNumber == 4) {
       setModalVisible(true);
       setIsFinished(true)
-      setWordNumber(5)
+      setWordNumber(4)
       setExerciceNbr(exerciceNbr)           
     }    
     
@@ -166,7 +189,7 @@ export function CardScreen(props) {
   const exerciceFinished = () => {
       setModalVisible(!modalVisible)
       setExerciceNbr(1)
-      setWordNumber(1)
+      setWordNumber(0)
     if (props.token) {      
       props.navigation.navigate('stat')
     }else {
@@ -182,13 +205,14 @@ export function CardScreen(props) {
   //   displayFR = exerciceList[5]
   // }
   
+  
 
   let displayTrad;
-  console.log('test', filtreExercice)
-  if (exerciceList.length > 0 ) {
-    displayTrad = traduction
-  } else {
+  
+  if (exerciceListFR[wordNumber] == null ) {
     displayTrad = <ActivityIndicator size="large" color="#9fa8da" />;
+  } else {
+    displayTrad = traduction
   }
 
   return (
@@ -200,9 +224,7 @@ export function CardScreen(props) {
           justifyContent: "space-evenly",
           borderWidth: 2,
           borderRadius: 20,
-          borderColor: "lightgray",       
-          
-          
+          borderColor: "lightgray", 
         }}
       >
         <View
@@ -242,7 +264,7 @@ export function CardScreen(props) {
             <Text>Français</Text>
           </View>
           <Text style={{ fontSize: 28, marginBottom: 20 }}>
-            {exerciceList[wordNumber]}
+            {exerciceListFR[wordNumber]}
           </Text>
         </View>
       </View>

@@ -11,7 +11,8 @@ const PlayScreen = () => {
       toValue: 1000,
       duration: 5000,
       useNativeDriver: true,
-      delay: 3000
+      delay: 3000,
+      
     }).start();
   };
 
@@ -25,7 +26,6 @@ const PlayScreen = () => {
         style={[
           styles.fadingContainer,
           {
-            // Bind opacity to animated value
             transform:[{
                 translateY: yAnim
             }               
@@ -33,7 +33,20 @@ const PlayScreen = () => {
           }
         ]}
       >
-        <Text style={styles.fadingText}>test</Text>
+        <Text>1</Text>
+      </Animated.View>
+      <Animated.View
+        style={[
+          styles.fadingContainer1,
+          {
+            transform:[{
+                translateY: yAnim
+            }               
+            ]
+          }
+        ]}
+      >
+        <Text>2</Text>
       </Animated.View>
     </SafeAreaView>
   );
@@ -41,23 +54,23 @@ const PlayScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,    
-    justifyContent: "flex-start",
-    alignItems: 'center'
+    flex: 1,
+    flexDirection: 'row',    
+    justifyContent: "space-evenly",
+    
   },
   fadingContainer: {    
     backgroundColor: "powderblue",
-    width : 190,
-    height: 190,
+    width : 120,
+    height: 120,
   },
-  fadingText: {
-    fontSize: 28
-  },
-  buttonRow: {
-    flexBasis: 100,
-    justifyContent: "space-evenly",
-    marginVertical: 16
+  fadingContainer1: {    
+    backgroundColor: "limegreen",
+    width : 120,
+    height: 120,
   }
+  
+  
 });
 
 export default PlayScreen;

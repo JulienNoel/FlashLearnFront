@@ -33,7 +33,7 @@ export function GameScreen(props) {
         type='font-awesome'
         color='#f50'
         size={30}
-        onPress={() => console.log('hello')}        
+        onPress={() => props.navigation.navigate('play')}        
         />
         </View>
         </LinearGradient>       

@@ -16,6 +16,7 @@ import StatScreen from './Screens/statScreen';
 import CardScreen from './Screens/cardScreen';
 import StartScreen from './Screens/startScreen';
 import LogScreen from './Screens/logScreen';
+import GameScreen from './Screens/gameScreen';
 
 
 
@@ -40,6 +41,8 @@ function BottomNavigator () {
 
           if (route.name == 'home') {
             iconName = 'md-home-sharp';
+          }else if (route.name == 'game') {
+            iconName = 'game-controller';
           }else if (route.name == 'stat') {
             iconName = 'stats-chart';
           }
@@ -55,7 +58,8 @@ function BottomNavigator () {
       }}
       
     >
-      <Tab.Screen name="home" component={HomeScreen} />      
+      <Tab.Screen name="home" component={HomeScreen} />
+      <Tab.Screen name="game" component={GameScreen} />      
       <Tab.Screen name="stat" component={StatScreen} />
       
     </Tab.Navigator>

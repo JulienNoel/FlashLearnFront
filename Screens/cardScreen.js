@@ -40,18 +40,10 @@ export function CardScreen(props) {
   
 
   useEffect(() => {
-    async function loadExercice() {
-      var rawResponse = await fetch(
-        `https://flashlearnapp.herokuapp.com/exercice`
-      );
-      var response = await rawResponse.json();
-      var objectResponse = response.result;
-
-      props.addExercice(objectResponse);
-      setListExe(objectResponse);
-    }
-    loadExercice();
-  }, [props.langue]);
+    
+      setListExe(props.exo[0]);         
+    
+  }, []);
 
   useEffect(() => {
     async function loadTranslate() {
@@ -96,7 +88,7 @@ export function CardScreen(props) {
   for (let word in filtreExercice) {
     exerciceListFR.push(filtreExercice[word]);
   }
-  exerciceListFR.splice(0,2);
+  exerciceListFR.splice(0,1);
   console.log(exerciceListFR)
 
   const speak = () => {
@@ -155,7 +147,7 @@ export function CardScreen(props) {
   
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: "🔍 Rappel FlashLearn!",
+        title: "🔍 Rappel FlashLearn !",
         body: `${displayNotif}`        
       },
       trigger: { seconds: time}
@@ -192,15 +184,12 @@ export function CardScreen(props) {
       setModalVisible(!modalVisible)
       setExerciceNbr(1)
       setWordNumber(0)
-    if (props.token) {      
-      props.navigation.navigate('stat')
-    }else {
-      props.navigation.navigate('signup')
-    }
-    for (let timeSetting of timeIntervalTest) {
-      schedulePushNotification(timeSetting)
-    }
-    setNotifTxt([])
+      props.token? props.navigation.navigate('stat') : props.navigation.navigate('signup')
+    
+      for (let timeSetting of timeIntervalTest) {
+        schedulePushNotification(timeSetting)
+      }
+      setNotifTxt([])
   }
   
   // if(isFinished) {

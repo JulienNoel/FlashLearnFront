@@ -17,7 +17,6 @@ const [selection, setSelection] = useState('')
 
 
 
-
 var changeNbrPlus = () => {
     
     if (nbreMots == 20) {

@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
+import { connect } from "react-redux";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { StyleSheet, Text, View, Image, Animated } from 'react-native';
 
-export default function StartScreen (props) {
+export function StartScreen (props) {
 
     const [isLoad, setIsLoad] = useState(false) 
     const [isToken, setIsToken] = useState(false)
@@ -33,6 +34,20 @@ export default function StartScreen (props) {
       return () => clearTimeout(timer);
       
     },[])
+
+    useEffect(() => {
+      async function loadExercice() {
+        var rawResponse = await fetch(
+          `https://flashlearnapp.herokuapp.com/exercice`
+        );
+        var response = await rawResponse.json();
+        var objectResponse = response.result;
+  
+        props.addExercice(objectResponse);
+        
+      }
+      loadExercice();
+    }, []);
 
     // useEffect(()=>{      
     //   async function loadToken() {
@@ -78,7 +93,13 @@ export default function StartScreen (props) {
 
 }
 
-
+function mapDispatchToProps(dispatch) {
+  return {
+    addExercice: function (exe) {
+      dispatch({ type: "addExercice", exercice: exe });
+    },
+  };
+}
   
 
 const styles = StyleSheet.create({
@@ -89,4 +110,4 @@ const styles = StyleSheet.create({
     
   });
 
-  
+  export default connect(null, mapDispatchToProps)(StartScreen); 

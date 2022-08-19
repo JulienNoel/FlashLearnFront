@@ -19,12 +19,6 @@ export function StartScreen (props) {
       useNativeDriver: true,
     }).start();
 
-    const localData = AsyncStorage.getItem("token", function(error, data) {
-      if (data) {
-        console.log(data)
-        setIsToken(true)
-      }
-     });
 
     useEffect(()=>{      
       
@@ -49,22 +43,29 @@ export function StartScreen (props) {
       loadExercice();
     }, []);
 
-    // useEffect(()=>{      
-    //   async function loadToken() {
-    //     var rawResponse = await fetch(
-    //       `http://192.168.0.12:3000/token`
-    //     );
-    //     var response = await rawResponse.json();
-    //     var objectResponse = response.token;
-        
-    //     if (response.result) {
-    //       const test = AsyncStorage.setItem("token", objectResponse)
-          
-    //     }         
-    //   }
-    //   loadToken();      
+    async function loadToken() {
+
+      var rawResponse = await fetch(
+        `http://192.168.0.12:3000/token`
+      );
+      var response = await rawResponse.json();
+      var token = response.user.token;
       
-    // },[!isToken])
+      if (response.result) {
+        const test = AsyncStorage.setItem("token", token)
+        console.log(test)
+      }         
+
+    }
+    
+    AsyncStorage.getItem("token", function(error, data) {
+      if (data) {
+        console.log(data)
+        setIsToken(true)
+      }else{
+        loadToken()      
+      }
+     });
          
     useEffect(()=>{      
       

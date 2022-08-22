@@ -1,12 +1,12 @@
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
 
-export default function StatScreen () {
 
-    return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Stats Screen</Text>
-    </View>)
+import { StyleSheet, Text, View } from "react-native";
 
+export default function StatScreen() {
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text>statScreen</Text>
+    </View>
+  );
 }
-

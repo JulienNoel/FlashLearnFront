@@ -38,12 +38,41 @@ export function CardScreen(props) {
   const [isFinished, setIsFinished] = useState(false)
   const [notifTxt, setNotifTxt] = useState([])
   
+  
 
   useEffect(() => {
     
-      setListExe(props.exo[0]);         
+      setListExe(props.exo[0]);
+
+      async function loadExerciceHistory() {
+      var rawResponse = await fetch(
+        `http://192.168.0.12:3000/exercicefind/${props.token}/${props.langue}`,
+        
+      );
+      var response = await rawResponse.json();
+      setExerciceNbr(response.result)
+      }
+      loadExerciceHistory()
     
   }, []);
+
+  useEffect(() => {
+
+    async function recordExerciceHistory() {
+    var rawResponse = await fetch(
+      `http://192.168.0.12:3000/exercicerecord`,{
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'},
+        body: `exercice=${exerciceNbr}&language=${props.langue}&token=${props.token}`
+       });
+      
+    );
+    var response = await rawResponse.json();
+    
+    }
+    recordExerciceHistory()
+  
+}, [exerciceNbr]);
 
   useEffect(() => {
     async function loadTranslate() {
@@ -65,7 +94,7 @@ export function CardScreen(props) {
       
     }
     loadTranslate();
-  }, [wordNumber, listExe]);
+  }, [wordNumber, exerciceNbr]);
 
   const timeInterval = [600,86400,172800,604800] 
   const timeIntervalTest = [2,6,15]
@@ -81,7 +110,7 @@ export function CardScreen(props) {
   let filtreExercice = listExe.filter((e) => e.exerciceId == exerciceNbr);
   filtreExercice = filtreExercice[0];
 
-  const exerciceMax = props.route.params.nbrEx / 5;
+ 
   
   let exerciceListFR = [];
 
@@ -166,37 +195,40 @@ export function CardScreen(props) {
     setNotifTxt(arr => {
       return [...arr, traduction]
     })
-    if (wordNumber > 4 && exerciceMax >= exerciceNbr) {
-      setExerciceNbr(exerciceNbr + 1);
-      setWordNumber(0);
-      
-    }
-    if (exerciceNbr == exerciceMax && wordNumber == 4) {
+    
+    if (wordNumber == 4) {
       setModalVisible(true);
       setIsFinished(true)
       setWordNumber(4)
-      setExerciceNbr(exerciceNbr)           
+                
     }    
     
   };
 
   const exerciceFinished = () => {
-      setModalVisible(!modalVisible)
-      setExerciceNbr(1)
+      setModalVisible(!modalVisible)      
       setWordNumber(0)
-      props.token? props.navigation.navigate('stat') : props.navigation.navigate('signup')
+      props.navigation.navigate('stat') 
     
       for (let timeSetting of timeIntervalTest) {
         schedulePushNotification(timeSetting)
       }
       setNotifTxt([])
   }
+
+  const exerciceContinue = () => {
+    setModalVisible(!modalVisible)
+    setExerciceNbr(exerciceNbr + 1)
+    setWordNumber(0)
+     
   
-  // if(isFinished) {
-  //   displayFR = exerciceList[5]
-  // }
+    for (let timeSetting of timeIntervalTest) {
+      schedulePushNotification(timeSetting)
+    }
+    setNotifTxt([])
+}
   
-  
+ 
 
   let displayTrad;
   
@@ -279,9 +311,9 @@ export function CardScreen(props) {
             onPress={exerciceCount}
           />
         </TouchableOpacity>
-      </View>
-      <View style={styles.centeredView}>
-        <Modal
+      </View>      
+        <Modal 
+          style={{height: 300, width: 300}}         
           animationType="slide"
           transparent={true}
           visible={modalVisible}
@@ -292,17 +324,25 @@ export function CardScreen(props) {
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text style={styles.modalText}>Bravo!</Text>
-              <Text style={styles.modalText}>Vous avez fini les exercices !!</Text>
+              <Text style={styles.modalText}>Vous avez fini l'exercice !!</Text>
+              <View style={{height: 150, width: 120, justifyContent: "space-evenly",}}>
               <Pressable
                 style={[styles.button, styles.buttonClose]}
                 onPress={exerciceFinished}
               >
+                <Text style={styles.textStyle}>Stop</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={exerciceContinue}
+              >
                 <Text style={styles.textStyle}>Continuer</Text>
               </Pressable>
+              </View>
             </View>
           </View>
         </Modal>
-      </View>
+      
     </View>
   );
 }
@@ -333,12 +373,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
-      width: 0,
-      height: 2,
+      width: 10,
+      height: 10,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5,
+    elevation: 15,
   },
   button: {
     borderRadius: 20,

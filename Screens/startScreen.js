@@ -52,8 +52,8 @@ export function StartScreen (props) {
       var token = response.user.token;
       
       if (response.result) {
-        const test = AsyncStorage.setItem("token", token)
-        console.log(test)
+        AsyncStorage.setItem("token", token)
+        props.addToken(token)
       }         
 
     }
@@ -62,6 +62,7 @@ export function StartScreen (props) {
       if (data) {
         console.log(data)
         setIsToken(true)
+        props.addToken(data)
       }else{
         loadToken()      
       }
@@ -99,6 +100,9 @@ function mapDispatchToProps(dispatch) {
     addExercice: function (exe) {
       dispatch({ type: "addExercice", exercice: exe });
     },
+    addToken: function(token) {
+      dispatch({ type: 'addToken', token: token})
+    }
   };
 }
   

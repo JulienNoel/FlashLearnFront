@@ -10,78 +10,72 @@ import { AntDesign } from '@expo/vector-icons';
 
 export function HomeScreen (props) {
 
-const [nbreMots, setNbreMots] = useState(5)
+const [count, setCount] = useState(0)
 const [hello, setHello] = useState('BONJOUR')
-const [combiendeMots, setCombiendeMots] = useState('Combien de Mots voulez-vous apprendre ?')
-const [selection, setSelection] = useState('')
+const [langue, setLangue] = useState('Sélectionnez une langue')
+const [flag, setFlag] = useState(require('../assets/royaume-uni.png'))
+const [isSelected, setIsSelected] = useState('')
 
 
-
-var changeNbrPlus = () => {
-    
-    if (nbreMots == 20) {
-        setNbreMots(20)
-    }else{
-        setNbreMots(nbreMots+5)
-    }
-}
-
-var changeNbrMoins = () => {
-    
-    if (nbreMots == 5) {
-        setNbreMots(5)
-    }else{
-        setNbreMots(nbreMots-5)
-    }
-}
-
-var changeLangue = (langue) => {
-
-    if (langue == 'en') {
-        setHello('Welcome')
-        setCombiendeMots('How many words do you want to learn ?')
-    }else if (langue == 'it'){
-        setHello('Buongiorno')
-        setCombiendeMots('Quante parole vuoi imparare ?')
-    }else if (langue == 'pt'){
-        setHello('Olá')
-        setCombiendeMots('Quantas palavras você quer aprender ?')
-    }else if (langue == 'es'){
-        setHello('Hola')
-        setCombiendeMots('¿Cuántas palabras quieres aprender ?')
-    }else if (langue == 'th'){
-        setHello('สวัสดี')
-        setCombiendeMots('คุณต้องการเรียนรู้คำศัพท์กี่คำ?')
-    }
-    props.selectLang(langue)
-    setSelection(true)
-}
-
-
-var selectionMessage
-
-if (selection === false) {
-    selectionMessage = <Text style={{fontSize: 15, color: 'red'}}>Selectionner un language</Text>
-}
-
-
-var handlePressExercice = () => {    
-    if (selection) {
-        props.navigation.navigate('card', {nbrEx : nbreMots})
-        setSelection('')
-    }else{
-        setSelection(false)
-    }
-    
-}
-
-
-var listLangues = [ {language: 'Anglais', langAbrev: 'en', image: require('../assets/royaume-uni.png')},
-                    {language: 'Italien', langAbrev: 'it', image: require('../assets/italie.png')},
-                    {language: 'Espagnol', langAbrev: 'es', image: require('../assets/espagne.png')},
-                    {language: 'Thailandais', langAbrev: 'th', image: require('../assets/thailande.png')},
-                    {language: 'Portugais', langAbrev: 'pt', image: require('../assets/le-portugal.png')}
+var listLangues = [ {language: 'Anglais', langAbrev: 'en', image: require('../assets/royaume-uni.png'), hello: 'Welcome', select: 'Select a language'},
+                    {language: 'Italien', langAbrev: 'it', image: require('../assets/italie.png'), hello: 'Buongiorno', select: 'Seleziona una lingua'},
+                    {language: 'Espagnol', langAbrev: 'es', image: require('../assets/espagne.png'), hello: 'Hola', select: 'Selecciona un idioma'},
+                    {language: 'Thailandais', langAbrev: 'th', image: require('../assets/thailande.png'), hello: 'สวัสดี', select: 'เลือกภาษา'},
+                    {language: 'Portugais', langAbrev: 'pt', image: require('../assets/le-portugal.png'), hello: 'Olá', select: 'Selecione um idioma'}
                      ]
+
+
+
+count < 0 && setCount(listLangues.length-1)
+count > listLangues.length-1 && setCount(0)
+
+useEffect(() => {
+
+    const settings = function (c) {
+        setFlag(listLangues[c].image)
+        setLangue(listLangues[c].select)
+        setHello(listLangues[c].hello)
+        props.selectLang(listLangues[c].langAbrev)
+        setIsSelected(true)
+    };
+    settings(count)
+
+},[count])
+
+
+const changeNbrPlus = () => {
+    setCount(count+1)      
+}
+
+const changeNbrMoins = () => {
+    setCount(count-1)      
+}
+//settings(count)
+
+var changeLangue = (langue, i) => {
+
+    const flagselection = listLangues.filter(el => el.langAbrev == langue)
+    setLangue(flagselection[0].select)
+    setHello(flagselection[0].hello)
+    setFlag(flagselection[0].image)
+    props.selectLang(langue)
+    setIsSelected(true)
+    setCount(i)
+}
+
+let displayMessage
+if (isSelected === false) {
+    displayMessage = <Text style={{fontSize: 15, color: 'red'}}>Selectionner un language</Text>
+}
+
+
+var handlePressExercice = () => {
+    
+   isSelected? props.navigation.navigate('card') : setIsSelected(false)   
+}
+
+
+
 
 var displayLang = listLangues.map((lang, i) => {
 
@@ -89,8 +83,8 @@ var displayLang = listLangues.map((lang, i) => {
         
             <TouchableOpacity key={i}
                             style={{alignItems: "center",                                    
-                                    padding: 15}}
-                            onPress={() => changeLangue(lang.langAbrev)}
+                                    padding: 7}}
+                            onPress={() => changeLangue(lang.langAbrev, i)}
                             >
             <Text>{lang.language}</Text>
             <Image  style={{height: 70, width: 70}}                 
@@ -112,12 +106,10 @@ var displayLang = listLangues.map((lang, i) => {
         </View>
 
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', width: '90%'}}>
-        <View>{selectionMessage}</View>
-            {/* <View style={{alignItems: 'center', width: '90%', marginBottom: 15}}>
-                <Text style={{fontSize: 25}}>Language</Text>
-            </View> */}
+        <View>{displayMessage}</View>
             <ScrollView style={{flex: 1, width: '85%'}}
-                        horizontal={true}>
+                        horizontal={true}
+                        showsHorizontalScrollIndicator={false}>
                 <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>          
                 {displayLang}
                 </View>
@@ -126,14 +118,16 @@ var displayLang = listLangues.map((lang, i) => {
         </View>
 
         <View style={{alignItems: 'center', justifyContent: 'center', width: '90%', height: '10%', marginTop: 20}}>
-            <Text style={{fontSize: 25, textAlign: 'center', fontWeight: '500', color: 'grey'}}>{combiendeMots}</Text>
+            <Text style={{fontSize: 25, textAlign: 'center', fontWeight: '500', color: 'grey'}}>{langue}</Text>
         </View>
 
         <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '90%'}}>
             <TouchableOpacity onPress={() => changeNbrMoins()}>
                 <AntDesign name="leftcircleo" size={80} color="#9fa8da"  />
             </TouchableOpacity>
-            <Text style={{fontSize: 60}}>{nbreMots}</Text>
+            <Image  style={{height: 70, width: 70}}                 
+                    source={flag}
+                        />
             <TouchableOpacity onPress={() => changeNbrPlus()}>
                 <AntDesign name="rightcircleo" size={80} color="#9fa8da" />
             </TouchableOpacity> 
@@ -175,7 +169,3 @@ function mapDispatchToProps(dispatch) {
    }
 
 export default connect(null, mapDispatchToProps)(HomeScreen);
-
-
-
- 

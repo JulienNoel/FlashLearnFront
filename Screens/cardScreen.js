@@ -18,6 +18,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import RecordScreen from "./recordScreen";
 import { REACT_APP_KEY } from "@env";
 import * as Notifications from 'expo-notifications';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -39,44 +40,82 @@ export function CardScreen(props) {
   const [notifTxt, setNotifTxt] = useState([])
   
   
+  
+
+  async function createUser() {
+
+      var rawResponse = await fetch(
+        `http://192.168.0.12:3000/createUser`,{
+          method: 'POST',
+          headers: {'Content-Type':'application/x-www-form-urlencoded'},
+          body: `exercice=${exerciceNbr}&language=${props.langue}`
+         }
+      );
+      var response = await rawResponse.json();
+      var token = response.user.token;
+      
+      if (response.result) {
+        AsyncStorage.setItem("token", token)
+        props.addToken(token)
+      }         
+
+    }
+
+    
+    
+    useEffect(() => {
+    
+      setListExe(props.exo[0]);         
+    
+  }, []);
+
+  
+  
+
 
   useEffect(() => {
     
-      setListExe(props.exo[0]);
+      //setListExe(props.exo[0]);
 
       async function loadExerciceHistory() {
+
+      if (props.token) { 
       var rawResponse = await fetch(
         `http://192.168.0.12:3000/exercicefind/${props.token}/${props.langue}`,
         
       );
       var response = await rawResponse.json();
-      setExerciceNbr(response.result)
+      response.result && setExerciceNbr(response.user[0].nbrExercice+1)
+      
+    }
       }
       loadExerciceHistory()
     
   }, []);
 
   useEffect(() => {
-
-    async function recordExerciceHistory() {
-    var rawResponse = await fetch(
-      `http://192.168.0.12:3000/exercicerecord`,{
-        method: 'POST',
-        headers: {'Content-Type':'application/x-www-form-urlencoded'},
-        body: `exercice=${exerciceNbr}&language=${props.langue}&token=${props.token}`
-       });
-      
-    );
-    var response = await rawResponse.json();
     
+
+      async function recordExerciceHistory() {
+        if (props.token) {
+        var rawResponse = await fetch(
+          `http://192.168.0.12:3000/exercicerecord`,{
+            method: 'PUT',
+            headers: {'Content-Type':'application/x-www-form-urlencoded'},
+            body: `exercice=${exerciceNbr}&language=${props.langue}&token=${props.token}`
+           });
+                 
+        var response = await rawResponse.json();
+        
+        }
     }
     recordExerciceHistory()
-  
+
 }, [exerciceNbr]);
 
   useEffect(() => {
     async function loadTranslate() {
-      if (exerciceListFR.length > 0) {
+      
 
         var rawResponse = await fetch(
           "https://translation.googleapis.com/language/translate/v2/",
@@ -89,17 +128,29 @@ export function CardScreen(props) {
         var response = await rawResponse.json();
           
         setTraduction(response.data.translations[0].translatedText.toLowerCase());
-        
-      }
+           
       
     }
     loadTranslate();
-  }, [wordNumber, exerciceNbr]);
+  }, [wordNumber, exerciceListFR, exerciceNbr]);
+
+
+
+  let filtreExercice = listExe.filter((e) => e.exerciceId == exerciceNbr);
+    filtreExercice = filtreExercice[0];
+  
+    let exerciceListFR = [];
+  
+    for (let word in filtreExercice) {
+      exerciceListFR.push(filtreExercice[word]);
+    }
+    exerciceListFR.splice(0,1);
+
+
+    console.log(exerciceListFR)
 
   const timeInterval = [600,86400,172800,604800] 
   const timeIntervalTest = [2,6,15]
-
-  console.log('notiftxt', notifTxt)
   
   
   const recordTranscription = (transcription) => {
@@ -107,18 +158,8 @@ export function CardScreen(props) {
     setTranscripted(transcription);
   };
 
-  let filtreExercice = listExe.filter((e) => e.exerciceId == exerciceNbr);
-  filtreExercice = filtreExercice[0];
 
  
-  
-  let exerciceListFR = [];
-
-  for (let word in filtreExercice) {
-    exerciceListFR.push(filtreExercice[word]);
-  }
-  exerciceListFR.splice(0,1);
-  console.log(exerciceListFR)
 
   const speak = () => {
     const thingToSay = traduction;
@@ -200,10 +241,12 @@ export function CardScreen(props) {
       setModalVisible(true);
       setIsFinished(true)
       setWordNumber(4)
-                
+      !props.token && createUser()
+
+      }         
     }    
     
-  };
+  
 
   const exerciceFinished = () => {
       setModalVisible(!modalVisible)      
@@ -237,6 +280,7 @@ export function CardScreen(props) {
   } else {
     displayTrad = traduction
   }
+
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -352,6 +396,9 @@ function mapDispatchToProps(dispatch) {
     addExercice: function (exe) {
       dispatch({ type: "addExercice", exercice: exe });
     },
+    addToken: function(token) {
+      dispatch({ type: 'addToken', token: token})
+    }
   };
 }
 

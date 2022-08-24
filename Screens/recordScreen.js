@@ -10,7 +10,8 @@ import { getNativeSourceAndFullInitialStatusForLoadAsync } from "expo-av/build/A
 export function RecordScreen(props) {
   
   const [recording, setRecording] = useState();
-  
+  const [sound, setSound] = useState()
+  const [RecordedURI, SetRecordedURI] = useState('')
 
   async function startRecording() {
     try {
@@ -47,12 +48,13 @@ export function RecordScreen(props) {
     }
   }
 
+
   async function stopRecording() {
     console.log("Stopping recording..");
     setRecording(undefined);
     await recording.stopAndUnloadAsync();
     const uri = recording.getURI();
-    
+    SetRecordedURI(uri)
     
     console.log("Recording stopped and stored at", uri);
 
@@ -78,17 +80,37 @@ export function RecordScreen(props) {
     
 
   }
+
+
+  const playSound = async() => {
+
+    const { sound } = await Audio.Sound.createAsync(
+      { uri: RecordedURI },
+      { shouldPlay: true }
+    );
+    setSound(sound);
+    console.log("Playing Sound");
+    await sound.playAsync();
+  }
   
   
 
   return (
-    <View>
+    <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start'}}>
       <TouchableOpacity>
         <FontAwesome
           name="microphone"
           size={80}
           color={recording ? "green" : "black"}
           onPress={recording ? stopRecording : startRecording}
+        />
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <FontAwesome
+          name="play"
+          size={80}
+          color={"black"}
+          onPress={playSound}
         />
       </TouchableOpacity>
       

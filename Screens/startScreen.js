@@ -66,7 +66,7 @@ export function StartScreen (props) {
       }
      });
       
-    // AsyncStorage.clear()
+    //AsyncStorage.clear()
     useEffect(()=>{      
       
       if(isLoad) {

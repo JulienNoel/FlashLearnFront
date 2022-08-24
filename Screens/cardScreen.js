@@ -66,7 +66,7 @@ export function CardScreen(props) {
     useEffect(() => {
     
       setListExe(props.exo[0]);         
-    
+      
   }, []);
 
   
@@ -74,8 +74,6 @@ export function CardScreen(props) {
 
 
   useEffect(() => {
-    
-      //setListExe(props.exo[0]);
 
       async function loadExerciceHistory() {
 
@@ -85,7 +83,7 @@ export function CardScreen(props) {
         
       );
       var response = await rawResponse.json();
-      response.result && setExerciceNbr(response.user[0].nbrExercice+1)
+      response.result && setExerciceNbr(response.user[0].nbrExercice)
       
     }
       }
@@ -102,7 +100,7 @@ export function CardScreen(props) {
           `https://flashlearnapp.herokuapp.com/exercicerecord`,{
             method: 'PUT',
             headers: {'Content-Type':'application/x-www-form-urlencoded'},
-            body: `exercice=${exerciceNbr}&language=${props.langue}&token=${props.token}`
+            body: `exercice=${exerciceNbr+1}&language=${props.langue}&token=${props.token}`
            });
                  
         var response = await rawResponse.json();
@@ -113,10 +111,20 @@ export function CardScreen(props) {
 
 }, [exerciceNbr]);
 
+let filtreExercice = listExe.filter((e) => e.exerciceId == exerciceNbr);
+filtreExercice = filtreExercice[0];
+
+let exerciceListFR = [];  
+
+for (let word in filtreExercice) {
+exerciceListFR.push(filtreExercice[word]);
+}
+exerciceListFR.splice(0,1);
+
   useEffect(() => {
     async function loadTranslate() {
-      
 
+      
         var rawResponse = await fetch(
           "https://translation.googleapis.com/language/translate/v2/",
           {
@@ -127,27 +135,16 @@ export function CardScreen(props) {
         );
         var response = await rawResponse.json();
           
-        setTraduction(response.data.translations[0].translatedText.toLowerCase());
-           
+        setTraduction(response.data.translations[0].translatedText.toLowerCase());  
       
-    }
+      }
     loadTranslate();
-  }, [wordNumber, exerciceListFR, exerciceNbr, listExe]);
-
-
-
-  let filtreExercice = listExe.filter((e) => e.exerciceId == exerciceNbr);
-    filtreExercice = filtreExercice[0];
   
-    let exerciceListFR = [];
-  
-    for (let word in filtreExercice) {
-      exerciceListFR.push(filtreExercice[word]);
-    }
-    exerciceListFR.splice(0,1);
+    
+  }, [wordNumber, exerciceNbr, filtreExercice]);
 
 
-    console.log(exerciceListFR)
+console.log(exerciceListFR)
 
   const timeInterval = [600,86400,172800,604800] 
   const timeIntervalTest = [2,6,15]
@@ -349,6 +346,7 @@ export function CardScreen(props) {
       >
         <RecordScreen transcriptionParent={recordTranscription} />
         {transcripted == traduction? <Text>Bravo</Text>:null}
+        <View>
         <TouchableOpacity>
           <FontAwesome
             name="check-circle"
@@ -357,6 +355,7 @@ export function CardScreen(props) {
             onPress={exerciceCount}
           />
         </TouchableOpacity>
+        </View>
       </View>      
         <Modal 
           style={{height: 300, width: 300}}         

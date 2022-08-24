@@ -60,9 +60,7 @@ export function CardScreen(props) {
       }         
 
     }
-
-    
-    
+  
     useEffect(() => {
     
       setListExe(props.exo[0]);         
@@ -139,8 +137,7 @@ exerciceListFR.splice(0,1);
       
       }
     loadTranslate();
-  
-    
+      
   }, [wordNumber, exerciceNbr, filtreExercice]);
 
 
@@ -154,9 +151,6 @@ console.log(exerciceListFR)
     console.log("transcription", transcription);
     setTranscripted(transcription);
   };
-
-
- 
 
   const speak = () => {
     const thingToSay = traduction;
@@ -204,10 +198,12 @@ console.log(exerciceListFR)
     return [...acc, {fr: el, trad: tradList[i]}]
   }, [])
   
-  let displayNotif = recapNotif.map((el, i) =>{
-    return `FR: ${el.fr} ${props.langue.toUpperCase()}: ${el.trad}\n`
-  })
+ 
+  let displayNotif = ''
 
+  for (const element of recapNotif) {
+    displayNotif += `FR: ${element.fr} ${props.langue.toUpperCase()}: ${element.trad}\n`
+  }
 
   
 
@@ -222,12 +218,10 @@ console.log(exerciceListFR)
       trigger: { seconds: time}
       
     });
-    // await Notifications.dismissAllNotificationsAsync()
-    // await Notifications.cancelAllScheduledNotificationsAsync()
+    
   }
-  
 
-
+  exerciceNbr > 25 && setExerciceNbr(1)
 
   const exerciceCount = () => {
     
@@ -245,8 +239,6 @@ console.log(exerciceListFR)
       }         
     }    
     
-  
-
   const exerciceFinished = () => {
       setModalVisible(!modalVisible)      
       setWordNumber(0)
@@ -271,7 +263,6 @@ console.log(exerciceListFR)
 }
   
  
-
   let displayTrad;
   
   if (exerciceListFR[wordNumber] == null ) {
@@ -290,7 +281,7 @@ console.log(exerciceListFR)
           justifyContent: "space-evenly",
           borderWidth: 2,
           borderRadius: 20,
-          borderColor: "lightgray", 
+          borderColor: "lightgray",
         }}
       >
         <View
@@ -345,32 +336,38 @@ console.log(exerciceListFR)
         }}
       >
         <RecordScreen transcriptionParent={recordTranscription} />
-        {transcripted == traduction? <Text>Bravo</Text>:null}
+        {transcripted == traduction ? <Text>Bravo</Text> : null}
         <View>
-        <TouchableOpacity>
-          <FontAwesome
-            name="check-circle"
-            size={100}
-            color="green"
-            onPress={exerciceCount}
-          />
-        </TouchableOpacity>
+          <TouchableOpacity>
+            <FontAwesome
+              name="check-circle"
+              size={100}
+              color="green"
+              onPress={exerciceCount}
+            />
+          </TouchableOpacity>
         </View>
-      </View>      
-        <Modal 
-          style={{height: 300, width: 300}}         
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>Bravo!</Text>
-              <Text style={styles.modalText}>Vous avez fini l'exercice !!</Text>
-              <View style={{height: 150, width: 120, justifyContent: "space-evenly",}}>
+      </View>
+      <Modal
+        style={{ height: 300, width: 300 }}
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Bravo!</Text>
+            <Text style={styles.modalText}>Vous avez fini l'exercice !!</Text>
+            <View
+              style={{
+                height: 150,
+                width: 120,
+                justifyContent: "space-evenly",
+              }}
+            >
               <Pressable
                 style={[styles.button, styles.buttonClose]}
                 onPress={exerciceFinished}
@@ -383,11 +380,10 @@ console.log(exerciceListFR)
               >
                 <Text style={styles.textStyle}>Continuer</Text>
               </Pressable>
-              </View>
             </View>
           </View>
-        </Modal>
-      
+        </View>
+      </Modal>
     </View>
   );
 }

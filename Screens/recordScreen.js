@@ -5,6 +5,7 @@ import { Audio } from "expo-av";
 import { FontAwesome } from "@expo/vector-icons";
 
 import { connect } from "react-redux";
+import { getNativeSourceAndFullInitialStatusForLoadAsync } from "expo-av/build/AV";
 
 export function RecordScreen(props) {
   
@@ -73,6 +74,8 @@ export function RecordScreen(props) {
     if (response.result) {
       props.transcriptionParent(response.transcription);
     }
+    
+    
 
   }
   

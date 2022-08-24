@@ -45,7 +45,7 @@ export function CardScreen(props) {
   async function createUser() {
 
       var rawResponse = await fetch(
-        `http://192.168.0.12:3000/createUser`,{
+        `https://flashlearnapp.herokuapp.com/createUser`,{
           method: 'POST',
           headers: {'Content-Type':'application/x-www-form-urlencoded'},
           body: `exercice=${exerciceNbr}&language=${props.langue}`
@@ -81,7 +81,7 @@ export function CardScreen(props) {
 
       if (props.token) { 
       var rawResponse = await fetch(
-        `http://192.168.0.12:3000/exercicefind/${props.token}/${props.langue}`,
+        `https://flashlearnapp.herokuapp.com/exercicefind/${props.token}/${props.langue}`,
         
       );
       var response = await rawResponse.json();
@@ -99,7 +99,7 @@ export function CardScreen(props) {
       async function recordExerciceHistory() {
         if (props.token) {
         var rawResponse = await fetch(
-          `http://192.168.0.12:3000/exercicerecord`,{
+          `https://flashlearnapp.herokuapp.com/exercicerecord`,{
             method: 'PUT',
             headers: {'Content-Type':'application/x-www-form-urlencoded'},
             body: `exercice=${exerciceNbr}&language=${props.langue}&token=${props.token}`
@@ -132,7 +132,7 @@ export function CardScreen(props) {
       
     }
     loadTranslate();
-  }, [wordNumber, exerciceListFR, exerciceNbr]);
+  }, [wordNumber, exerciceListFR, exerciceNbr, listExe]);
 
 
 
@@ -208,8 +208,10 @@ export function CardScreen(props) {
   }, [])
   
   let displayNotif = recapNotif.map((el, i) =>{
-    return `FR: ${el.fr}, ${props.langue.toUpperCase()}: ${el.trad}\n`
+    return `FR: ${el.fr} ${props.langue.toUpperCase()}: ${el.trad}\n`
   })
+
+
   
 
   async function schedulePushNotification(time) {

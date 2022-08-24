@@ -27,19 +27,23 @@
       }
     },
     "web": {
-      "favicon": "./assets/faviconflashlearn.png"
+      "favicon": "./assets/flashlearnfavicon.png"
     },
     "notification":{
-      "icon": "./assets/faviconflashlearn.png"
+      "icon": "./assets/flashlearnfavicon.png",
+      "color": "#9fa8da",
+      "androidMode": "default"
     },
     "plugins": [
       [
         "expo-notifications",
         {
-          "icon": "./assets/faviconflashlearn.png",
-          "color": "#ffffff"          
+          "icon": "./assets/flashlearnfavicon.png",
+          "color": "#9fa8da"
+          
         }
       ]
     ]
+    
   }
 }

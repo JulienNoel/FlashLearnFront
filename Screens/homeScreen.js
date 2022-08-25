@@ -43,14 +43,6 @@ useEffect(() => {
 },[count])
 
 
-const changeNbrPlus = () => {
-    setCount(count+1)      
-}
-
-const changeNbrMoins = () => {
-    setCount(count-1)      
-}
-//settings(count)
 
 var changeLangue = (langue, i) => {
 
@@ -122,13 +114,13 @@ var displayLang = listLangues.map((lang, i) => {
         </View>
 
         <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '90%'}}>
-            <TouchableOpacity onPress={() => changeNbrMoins()}>
+            <TouchableOpacity onPress={() => setCount(count-1)}>
                 <AntDesign name="leftcircleo" size={80} color="#9fa8da"  />
             </TouchableOpacity>
             <Image  style={{height: 70, width: 70}}                 
                     source={flag}
                         />
-            <TouchableOpacity onPress={() => changeNbrPlus()}>
+            <TouchableOpacity onPress={() => setCount(count+1)}>
                 <AntDesign name="rightcircleo" size={80} color="#9fa8da" />
             </TouchableOpacity> 
             

@@ -132,15 +132,18 @@ exerciceListFR.splice(0,1);
           }
         );
         var response = await rawResponse.json();
+        
+        if (exerciceListFR[wordNumber]) {
+          setTraduction(response.data.translations[0].translatedText.toLowerCase())
+        }
           
-        setTraduction(response.data.translations[0].translatedText.toLowerCase());  
       
       }
     loadTranslate();
       
-  }, [wordNumber, exerciceNbr, filtreExercice]);
+  }, [wordNumber, filtreExercice]);
 
-
+console.log(traduction)
 console.log(exerciceListFR)
 
   const timeInterval = [600,86400,172800,604800] 

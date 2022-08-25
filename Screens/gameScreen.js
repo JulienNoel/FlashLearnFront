@@ -12,18 +12,23 @@ import { LinearGradient } from "expo-linear-gradient";
 
 export function GameScreen(props) {
   const [exerciceList, setExerciceList] = useState([]);
+  
 
   useEffect(() => {
     setExerciceList(props.exo[0]);
     console.log(props.exo[0]);
+    
+    
   }, []);
 
-  const displayExercice = exerciceList.map((el, i) => {
+  let displayExercice = exerciceList.map((el, i) => {
     return <Cards exercice={el.exerciceId} key={i} navigation={props.navigation}/>;
-  });
+  })
+  
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
       <View style={styles.container}>{displayExercice}</View>
     </ScrollView>
   );
@@ -65,11 +70,17 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     marginTop: "15%",
     justifyContent: "center",
+    
+  },
+  contentContainer:{
+    
+    paddingBottom: 50,
+    
   },
   card: {
     alignItems: "center",
     justifyContent: "center",
-    height: "10%",
+    height: 150,
     width: "40%",
     margin: "3%",
     borderRadius: 15,

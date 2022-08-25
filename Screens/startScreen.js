@@ -43,20 +43,6 @@ export function StartScreen (props) {
       loadExercice();
     }, []);
 
-    // async function loadToken() {
-
-    //   var rawResponse = await fetch(
-    //     `http://192.168.0.12:3000/createUser`
-    //   );
-    //   var response = await rawResponse.json();
-    //   var token = response.user.token;
-      
-    //   if (response.result) {
-    //     AsyncStorage.setItem("token", token)
-    //     props.addToken(token)
-    //   }         
-
-    // }
     
     AsyncStorage.getItem("token", function(error, data) {
       if (data) {
@@ -66,7 +52,7 @@ export function StartScreen (props) {
       }
      });
       
-    //AsyncStorage.clear()
+    
     useEffect(()=>{      
       
       if(isLoad) {

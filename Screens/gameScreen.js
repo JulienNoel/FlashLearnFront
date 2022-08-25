@@ -12,17 +12,34 @@ import { LinearGradient } from "expo-linear-gradient";
 
 export function GameScreen(props) {
   const [exerciceList, setExerciceList] = useState([]);
-  
+  const [exerciceNbr, setExerciceNbr] = useState(0)
 
   useEffect(() => {
     setExerciceList(props.exo[0]);
-    console.log(props.exo[0]);
     
-    
+       
   }, []);
 
+  useEffect(() => {
+
+    async function loadExerciceHistory() {
+
+    if (props.token) { 
+    var rawResponse = await fetch(
+      `https://flashlearnapp.herokuapp.com/exercicefind/${props.token}/${props.langue}`,
+      
+    );
+    var response = await rawResponse.json();
+    response.result? setExerciceNbr(response.user[0].nbrExercice) : setExerciceNbr(0)
+    
+  }
+    }
+    loadExerciceHistory()
+  
+}, [props.langue]);
+
   let displayExercice = exerciceList.map((el, i) => {
-    return <Cards exercice={el.exerciceId} key={i} navigation={props.navigation}/>;
+    return <Cards exercice={el.exerciceId} key={i} navigation={props.navigation} isUnlock={exerciceNbr}/>;
   })
   
 
@@ -35,6 +52,9 @@ export function GameScreen(props) {
 }
 
 export function Cards(props) {
+
+  console.log(props.isUnlock)
+
   return (
     <LinearGradient
       colors={["#9fa8da", "#6e7fd1", "#4f14b5"]}
@@ -48,7 +68,7 @@ export function Cards(props) {
       <View style={{ height: "70%", justifyContent: "center" }}>
         <Icon
           raised
-          name="lock"
+          name={props.isUnlock <= props.exercice? "lock" : "unlock"}
           type="font-awesome"
           color="#f50"
           size={30}
@@ -60,7 +80,7 @@ export function Cards(props) {
 }
 
 function mapStateToProps(state) {
-  return { langue: state.languageSelect, exo: state.exercice };
+  return { langue: state.languageSelect, exo: state.exercice, token: state.token };
 }
 
 const styles = StyleSheet.create({

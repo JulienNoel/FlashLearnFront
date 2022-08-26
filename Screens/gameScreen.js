@@ -68,9 +68,9 @@ export function Cards(props) {
       <View style={{ height: "70%", justifyContent: "center" }}>
         <Icon
           raised
-          name={props.isUnlock <= props.exercice? "lock" : "unlock"}
+          name={props.isUnlock < props.exercice? "lock" : "search"}
           type="font-awesome"
-          color="#f50"
+          color={props.isUnlock < props.exercice? "#f50" : "green"}
           size={30}
           onPress={() => props.navigation.navigate("play")}
         />

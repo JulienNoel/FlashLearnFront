@@ -38,6 +38,7 @@ export function CardScreen(props) {
   const [modalVisible, setModalVisible] = useState(false);
   const [isFinished, setIsFinished] = useState(false)
   const [notifTxt, setNotifTxt] = useState([])
+  const [filtreExercice, setFiltreExercice] = useState([])
   
   
   
@@ -60,19 +61,10 @@ export function CardScreen(props) {
       }         
 
     }
-  
-    useEffect(() => {
-    
-      setListExe(props.exo[0]);         
-      
-  }, []);
-
-  
-  
 
 
   useEffect(() => {
-
+      setListExe(props.exo[0]);
       async function loadExerciceHistory() {
 
       if (props.token) { 
@@ -81,13 +73,22 @@ export function CardScreen(props) {
         
       );
       var response = await rawResponse.json();
-      response.result && setExerciceNbr(response.user[0].nbrExercice)
+      response.result && setExerciceNbr(response.user[0].nbrExercice+1)
       
     }
       }
       loadExerciceHistory()
     
   }, []);
+
+  useEffect(() => {
+    
+    //setListExe(props.exo[0]);
+    let triExercice = listExe.filter((e) => e.exerciceId == exerciceNbr);
+    setFiltreExercice(triExercice[0])
+// filtreExercice = filtreExercice[0];         
+    
+}, [exerciceNbr]);
 
   useEffect(() => {
     
@@ -109,8 +110,8 @@ export function CardScreen(props) {
 
 }, [exerciceNbr]);
 
-let filtreExercice = listExe.filter((e) => e.exerciceId == exerciceNbr);
-filtreExercice = filtreExercice[0];
+// let filtreExercice = listExe.filter((e) => e.exerciceId == exerciceNbr);
+// filtreExercice = filtreExercice[0];
 
 let exerciceListFR = [];  
 

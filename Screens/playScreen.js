@@ -10,72 +10,7 @@ export function PlayScreen(props) {
   const [word, setWord] = useState('')
   const [randomWord, setRandomWord] = useState('')
   const [listeMotsFR, setlisteMotsFR] = useState([])
-
-  function shuffle (arr) {
-    return Math.floor(Math.random()*arr.length)
-  }
-
-  function misEnFormeArray (arr) {
-    return arr.map(({exerciceId, ...rest}) => {
-      return rest
-    })
-    .reduce(function(prev, curr) {
-      return [...prev, curr.w1, curr.w2, curr.w3, curr.w4, curr.w5 ]
-    },[])
-  }
-
-  const colorList = ['red','#FC600A','orange','#FCCC1A','brown','#B2D732','green','#347C98','blue','#4424D6','purple','#C21460']
-
-
-  useEffect(()=>{ 
-    
-    let listWordsFR = misEnFormeArray(props.exo[0])      
-    setRandomWord(listWordsFR[shuffle(listWordsFR)].toUpperCase())
-    
-    let filteredExercice = props.exo[0].filter(e => e.exerciceId == props.route.params.numeroExercice)
-    let selectedExerciceArr = misEnFormeArray(filteredExercice)
-    
-    setWord(selectedExerciceArr[0].toUpperCase())
-
-    const randColor = () =>  {      
-      return colorList[shuffle(colorList)];
-  }
-
-  setColor1(randColor)
-  setColor2(randColor)
-
-  if (color1 === color2) {
-    setColor2(randColor)
-  }
-    
-     
-   },[])
-
-   
-  
-
-  const data =[{word: randomWord,
-                color: color1},
-              {word: word,
-              color: color2}]
-              .sort(() => Math.random() - 0.5) //melange des datas pour randomiser le jeu
-
-  
-  let displaySquare = data.map((el,i) => {
-    return <Square key={i} color={el.color} word={el.word} answer={word}/>
-  })
-  
-
-  return (
-    <SafeAreaView style={styles.container}>
-      
-      {displaySquare}
-
-    </SafeAreaView>
-  );
-}
-
-export function Square(props) {
+  const [wordNbr, setWordNbr] = useState(0)
 
   const yAnim = useRef(new Animated.Value(0)).current;
 
@@ -90,11 +25,97 @@ export function Square(props) {
     }).start();
   };
 
-  fadeIn()
+fadeIn()
 
+const resetAnimation = () => {
+  Animated.timing(yAnim, {
+    toValue: 1000,
+    duration: 5000,
+    useNativeDriver: true,
+    delay: 3000,
+    
+  }).reset()
+ }
+
+  function shuffle (arr) {
+    return Math.floor(Math.random()*arr.length)
+  }
+
+  function misEnFormeArray (arr) {
+    return arr.map(({exerciceId, ...rest}) => {
+      return rest
+    })
+    .reduce(function(prev, curr) {
+      return [...prev, curr.w1, curr.w2, curr.w3, curr.w4, curr.w5 ]
+    },[])
+  }
+
+  function isCorrect (boolean) {
+    boolean? setWordNbr(wordNbr+1) : props.navigation.navigate('stat')
+    resetAnimation()
+  }
+
+  const colorList = ['red','#FC600A','orange','#FCCC1A','brown','#B2D732','green','#347C98','blue','#4424D6','purple','#C21460']
+
+
+  useEffect(()=>{ 
+    
+    let listWordsFR = misEnFormeArray(props.exo[0])      
+    setRandomWord(listWordsFR[shuffle(listWordsFR)].toUpperCase())
+    
+    let filteredExercice = props.exo[0].filter(e => e.exerciceId == props.route.params.numeroExercice)
+    let selectedExerciceArr = misEnFormeArray(filteredExercice)
+    
+    setWord(selectedExerciceArr[wordNbr].toUpperCase())
+
+    const randColor = () =>  {      
+      return colorList[shuffle(colorList)];
+  }
+
+  setColor1(randColor)
+  setColor2(randColor)
+
+  if (color1 === color2) {
+    setColor2(randColor)
+  }
+    
+     
+   },[wordNbr])
+
+   
+  
+
+  const data =[{word: randomWord,
+                color: color1},
+              {word: word,
+              color: color2}]
+              .sort(() => Math.random() - 0.5) //melange des datas pour randomiser le jeu
+
+  
+  let displaySquare = data.map((el,i) => {
+    return <Square key={i} color={el.color} word={el.word} answer={word} isCorrect={isCorrect} animation={yAnim}/>
+  })
+  
 
   return (
-    <TouchableOpacity onPress={() => console.log("hello")}>
+    <SafeAreaView style={styles.container}>
+      
+      {displaySquare}
+
+    </SafeAreaView>
+  );
+}
+
+export function Square(props) {
+
+
+function handleClick() {
+  props.answer === props.word? props.isCorrect(true) : props.isCorrect(false)
+  
+  }
+
+  return (
+    <TouchableOpacity onPress={handleClick}>
       <Animated.View
         style={[
           { backgroundColor: props.color },
@@ -102,7 +123,7 @@ export function Square(props) {
           {
             transform: [
               {
-                translateY: yAnim,
+                translateY: props.animation,
               },
             ],
           },

@@ -246,7 +246,7 @@ console.log(exerciceListFR)
   const exerciceFinished = () => {
       setModalVisible(!modalVisible)      
       setWordNumber(0)
-      props.navigation.navigate('stat') 
+      props.navigation.navigate('game') 
     
       for (let timeSetting of timeIntervalTest) {
         schedulePushNotification(timeSetting)

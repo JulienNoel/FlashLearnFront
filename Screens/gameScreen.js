@@ -55,6 +55,12 @@ export function Cards(props) {
 
   console.log(props.isUnlock)
 
+  function goToGame() {
+    if (!(props.isUnlock < props.exercice)) {
+      props.navigation.navigate("play", {numeroExercice: props.exercice})
+    }
+  }
+
   return (
     <LinearGradient
       colors={["#9fa8da", "#6e7fd1", "#4f14b5"]}
@@ -72,7 +78,7 @@ export function Cards(props) {
           type="font-awesome"
           color={props.isUnlock < props.exercice? "#f50" : "green"}
           size={30}
-          onPress={() => props.navigation.navigate("play")}
+          onPress={goToGame}
         />
       </View>
     </LinearGradient>

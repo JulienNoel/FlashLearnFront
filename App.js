@@ -18,6 +18,7 @@ import StartScreen from './Screens/startScreen';
 import LogScreen from './Screens/logScreen';
 import GameScreen from './Screens/gameScreen';
 import PlayScreen from './Screens/playScreen';
+import CountdownScreen from './Screens/countown';
 
 
 const Tab = createBottomTabNavigator();
@@ -78,7 +79,8 @@ export default function App() {
           <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
           <Stack.Screen name="card" component={CardScreen} />
           <Stack.Screen name="signup" component={LogScreen} />
-          <Stack.Screen name="play" component={PlayScreen} />          
+          <Stack.Screen name="play" component={PlayScreen} />
+          <Stack.Screen name="countdown" component={CountdownScreen} />          
         </Stack.Navigator>     
       </NavigationContainer>
     </Provider>

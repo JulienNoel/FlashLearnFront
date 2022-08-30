@@ -14,10 +14,13 @@ export function GameScreen(props) {
   const [exerciceList, setExerciceList] = useState([]);
   const [exerciceNbr, setExerciceNbr] = useState(0)
 
+  const cannotGoBack = false
+
+ 
+
   useEffect(() => {
     setExerciceList(props.exo[0]);
-    
-       
+         
   }, []);
 
   useEffect(() => {
@@ -46,7 +49,7 @@ export function GameScreen(props) {
   return (
     
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
-      <View style={styles.container}>{displayExercice}</View>
+      <View style={styles.container}>{exerciceList && displayExercice}</View>
     </ScrollView>
   );
 }
@@ -57,7 +60,7 @@ export function Cards(props) {
 
   function goToGame() {
     if (!(props.isUnlock < props.exercice)) {
-      props.navigation.navigate("play", {numeroExercice: props.exercice})
+      props.navigation.navigate("countdown", {numeroExercice: props.exercice})
     }
   }
 

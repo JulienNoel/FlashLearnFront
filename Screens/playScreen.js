@@ -11,30 +11,29 @@ export function PlayScreen(props) {
   const [randomWord, setRandomWord] = useState('')
   const [listeMotsFR, setlisteMotsFR] = useState([])
   const [wordNbr, setWordNbr] = useState(0)
+  const [isNotSelected, setIsNotSelected] = useState(false)
 
   const yAnim = useRef(new Animated.Value(0)).current;
 
   const fadeIn = () => {
     // Will change fadeAnim value to 1 in 5 seconds
     Animated.timing(yAnim, {
-      toValue: 1000,
+      toValue: 900,
       duration: 5000,
       useNativeDriver: true,
-      delay: 3000,
+      delay: 1000,
       
-    }).start();
+    }).start(({ finished }) => {
+      if (finished) {
+        props.navigation.navigate('stat')
+    }
+    });
   };
 
 fadeIn()
 
 const resetAnimation = () => {
-  Animated.timing(yAnim, {
-    toValue: 1000,
-    duration: 5000,
-    useNativeDriver: true,
-    delay: 3000,
-    
-  }).reset()
+  Animated.timing(yAnim).reset()
  }
 
   function shuffle (arr) {
@@ -95,7 +94,9 @@ const resetAnimation = () => {
   let displaySquare = data.map((el,i) => {
     return <Square key={i} color={el.color} word={el.word} answer={word} isCorrect={isCorrect} animation={yAnim}/>
   })
+
   
+ 
 
   return (
     <SafeAreaView style={styles.container}>

@@ -4,29 +4,41 @@ import ProgressCircle from 'react-native-progress-circle'
 
 import { StyleSheet, Text, View } from "react-native";
 
-export default function StatScreen() {
+export default function StatScreen(props) {
 
   const [count, setCount] = useState(0)
 
-  let pourcentageValue = 33
+  let pourcentageValue = 80
   
+  useEffect(() => {
+  
+    if (count < pourcentageValue) {
+  
+      const timer = setInterval(()=>{
+        setCount(count+1)        
+        }, 20)
+      
+      return () => clearInterval(timer); 
+    }
+           
+  },[count, pourcentageValue])
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       
-      <StatCircle />
+      <StatCircle compteur={count}/>
 
     </View>
   );
 }
 
-export function StatCircle() {
+export function StatCircle(props) {
   
 
   return (
     <View>
       <ProgressCircle
-        percent={33}
+        percent={props.compteur}
         radius={75}
         borderWidth={12}
         color="#4f14b5"
@@ -34,7 +46,7 @@ export function StatCircle() {
         bgColor="#fff"
         
       >
-        <Text style={{ fontSize: 30 }}>33%</Text>
+        <Text style={{ fontSize: 30 }}>{props.compteur}%</Text>
       </ProgressCircle>
     </View>
   );

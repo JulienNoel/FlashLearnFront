@@ -6,7 +6,7 @@ export default function CountdownScreen(props) {
 
     const [count, setCount] = useState(3)
     const [color, setColor] = useState('orangered')
-  
+    
     
   
   useEffect(() => {
@@ -20,15 +20,17 @@ export default function CountdownScreen(props) {
       
       return () => clearInterval(timer); 
     }else {
-      setCount(0)
+      //setCount(0)
       setColor('seagreen')
-      const timer2 = setTimeout(() =>{
+      const timer2 = setTimeout(() =>{ 
         props.navigation.navigate('play',{numeroExercice: props.route.params.numeroExercice})
       },1000)
       return () => clearTimeout(timer2)
     }
            
   },[count])
+
+
   
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>

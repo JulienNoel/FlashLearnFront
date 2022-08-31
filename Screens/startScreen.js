@@ -65,18 +65,17 @@ export function StartScreen (props) {
      
 
     return (
-      <LinearGradient        
-      colors={['#9fa8da', '#6e7fd1', '#4f14b5']}
-      style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}
-    >
-    
-    <Animated.View style={{transform: [{scale: fadeAnim}], opacity: fadeAnim}}>
-        <Image
-        style={styles.logo}
-        source={require('../assets/logo.png')}
-        />
-    </Animated.View>
-    </LinearGradient>)
+      <LinearGradient
+        colors={["#9fa8da", "#6e7fd1", "#4f14b5"]}
+        style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+      >
+        <Animated.View
+          style={{ transform: [{ scale: fadeAnim }], opacity: fadeAnim }}
+        >
+          <Image style={styles.logo} source={require("../assets/logo.png")} />
+        </Animated.View>
+      </LinearGradient>
+    );
 
 }
 

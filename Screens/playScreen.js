@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Animated, Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity } from "react-native";
+import CountdownScreen from "./countown";
 
 
 export function PlayScreen(props) {
@@ -9,12 +10,13 @@ export function PlayScreen(props) {
   const [color2, setColor2] = useState('')
   const [word, setWord] = useState('')
   const [randomWord, setRandomWord] = useState('')
-  const [listeMotsFR, setlisteMotsFR] = useState([])
   const [wordNbr, setWordNbr] = useState(0)
-  const [isNotSelected, setIsNotSelected] = useState(false)
+  
 
   const yAnim = useRef(new Animated.Value(0)).current;
 
+
+  
   const fadeIn = () => {
     // Will change fadeAnim value to 1 in 5 seconds
     Animated.timing(yAnim, {
@@ -47,6 +49,7 @@ const resetAnimation = () => {
     .reduce(function(prev, curr) {
       return [...prev, curr.w1, curr.w2, curr.w3, curr.w4, curr.w5 ]
     },[])
+    .sort(() => Math.random() - 0.5)
   }
 
   function isCorrect (boolean) {
@@ -63,6 +66,7 @@ const resetAnimation = () => {
     setRandomWord(listWordsFR[shuffle(listWordsFR)].toUpperCase())
     
     let filteredExercice = props.exo[0].filter(e => e.exerciceId == props.route.params.numeroExercice)
+                                        
     let selectedExerciceArr = misEnFormeArray(filteredExercice)
     
     setWord(selectedExerciceArr[wordNbr].toUpperCase())
@@ -77,12 +81,9 @@ const resetAnimation = () => {
   if (color1 === color2) {
     setColor2(randColor)
   }
-    
      
    },[wordNbr])
 
-   
-  
 
   const data =[{word: randomWord,
                 color: color1},
@@ -96,13 +97,10 @@ const resetAnimation = () => {
   })
 
   
- 
 
   return (
     <SafeAreaView style={styles.container}>
-      
       {displaySquare}
-
     </SafeAreaView>
   );
 }
@@ -161,6 +159,7 @@ const styles = StyleSheet.create({
   fadingContainer: {     
     width : 135,
     height: 135,
+    borderRadius: 10
   }  
   
 });

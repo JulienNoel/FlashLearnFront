@@ -14,7 +14,7 @@ export function GameScreen(props) {
   const [exerciceList, setExerciceList] = useState([]);
   const [exerciceNbr, setExerciceNbr] = useState(0)
 
-  const cannotGoBack = false
+  
 
  
 

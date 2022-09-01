@@ -19,6 +19,7 @@ import RecordScreen from "./recordScreen";
 import { REACT_APP_KEY } from "@env";
 import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useLanguage from "../hooks/useLanguage";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -161,34 +162,8 @@ console.log(exerciceListFR)
     Speech.speak(thingToSay, { language: props.langue, rate: 0.5, pitch: 0.9 });
   };
 
-  const listLangues = [
-    {
-      language: "Anglais",
-      langAbrev: "en",
-      image: require("../assets/royaume-uni.png"),
-    },
-    {
-      language: "Italien",
-      langAbrev: "it",
-      image: require("../assets/italie.png"),
-    },
-    {
-      language: "Espagnol",
-      langAbrev: "es",
-      image: require("../assets/espagne.png"),
-    },
-    {
-      language: "Thailandais",
-      langAbrev: "th",
-      image: require("../assets/thailande.png"),
-    },
-    {
-      language: "Portugais",
-      langAbrev: "pt",
-      image: require("../assets/le-portugal.png"),
-    },
-  ];
-  let filtreLanguage = listLangues.filter((e) => e.langAbrev === props.langue);
+  
+  let filtreLanguage = useLanguage(props.langue)
 
   let resultTranscription;
   if (transcripted == traduction) {

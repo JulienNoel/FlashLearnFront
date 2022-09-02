@@ -84,10 +84,9 @@ export function CardScreen(props) {
 
   useEffect(() => {
     
-    //setListExe(props.exo[0]);
     let triExercice = listExe.filter((e) => e.exerciceId == exerciceNbr);
     setFiltreExercice(triExercice[0])
-// filtreExercice = filtreExercice[0];         
+         
     
 }, [exerciceNbr]);
 
@@ -111,8 +110,6 @@ export function CardScreen(props) {
 
 }, [exerciceNbr]);
 
-// let filtreExercice = listExe.filter((e) => e.exerciceId == exerciceNbr);
-// filtreExercice = filtreExercice[0];
 
 let exerciceListFR = [];  
 
@@ -263,12 +260,21 @@ console.log(exerciceListFR)
           borderColor: "lightgray",
         }}
       >
+      <View style={{ alignItems: "center", justifyContent: "center" }}>
+          <FontAwesome
+            name="volume-up"
+            size={40}
+            color="black"
+            onPress={speak}
+          />
+        </View>
         <View
           style={{
             flexDirection: "row",
             alignItems: "center",
           }}
         >
+        
           <View style={{ marginRight: 15, marginLeft: 15 }}>
             <Image
               style={{ height: 60, width: 60 }}
@@ -278,14 +284,7 @@ console.log(exerciceListFR)
           </View>
           <Text style={{ fontSize: 28, marginBottom: 20 }}>{displayTrad}</Text>
         </View>
-        <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <FontAwesome
-            name="volume-up"
-            size={40}
-            color="black"
-            onPress={speak}
-          />
-        </View>
+        
         <View
           style={{
             flexDirection: "row",
@@ -307,15 +306,14 @@ console.log(exerciceListFR)
 
       <View
         style={{
-          flexDirection: "row-reverse",
+          flexDirection: "column-reverse",
           width: "80%",
           height: "25%",
           alignItems: "center",
           justifyContent: "space-evenly",
         }}
       >
-        <RecordScreen transcriptionParent={recordTranscription} />
-        {transcripted == traduction ? <Text>Bravo</Text> : null}
+       
         <View>
           <TouchableOpacity>
             <FontAwesome
@@ -326,6 +324,8 @@ console.log(exerciceListFR)
             />
           </TouchableOpacity>
         </View>
+        <RecordScreen transcriptionParent={recordTranscription} />
+        {transcripted == traduction ? <Text>Bravo</Text> : null}
       </View>
       <Modal
         style={{ height: 300, width: 300 }}

@@ -96,7 +96,7 @@ export function RecordScreen(props) {
   
 
   return (
-    <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start'}}>
+    <View style={{width: '80%', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>
       <TouchableOpacity>
         <FontAwesome
           name="microphone"

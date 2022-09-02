@@ -3,15 +3,14 @@ import { connect } from "react-redux";
 
 import ProgressCircle from "react-native-progress-circle";
 import useLanguage from "../hooks/useLanguage";
-import { AntDesign } from "@expo/vector-icons";
+
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 
 export function StatScreen(props) {
   
   const [historique, setHistorique] = useState([])
-  const listLanguage = ['en','it','es','th','pt']
-
-  
+  const [nbrTotalExercice, setNbrTotalExercice] = useState(0)
+    
 
   useEffect(() => {
     
@@ -23,33 +22,32 @@ export function StatScreen(props) {
     );
     var response = await rawResponse.json();
     setHistorique(response.result)
+    setNbrTotalExercice(response.nbrExercice)
     }
     loadHistorique()
 
   }, []);
 
   
-  const langueUtilise = useLanguage(props.langue)
-
   
+  let displayCircles = historique.map((el, i) => {
+    return <StatCircle key={i} lang={el.langue} exeDone={el.nbrExercice} totalExercice={nbrTotalExercice}/>
+  })
 
   
 
   return (
-    <View
-      style={{ flex: 1, alignItems: "center", justifyContent: "space-evenly" }}
-    >
-      <StatCircle compteur={count} />
-      
-      
+    <View style={{ flex: 1, justifyContent: "space-evenly", alignItems:'center', marginTop: 25}}>
+      {displayCircles}
     </View>
   );
 }
 
 export function StatCircle(props) {
 
-  const [count, setCount] = useState(10);
-  let pourcentageValue = 80;
+  const [count, setCount] = useState(0);
+  let pourcentageValue = Math.floor(props.exeDone/props.totalExercice*100);
+  const langueUtilise = useLanguage(props.lang)
 
   useEffect(() => {
     if (count < pourcentageValue) {
@@ -62,33 +60,33 @@ export function StatCircle(props) {
   }, [count, pourcentageValue]);
 
 
+
   return (
-    <View>
-      <ProgressCircle
-        percent={count}
-        radius={100}
-        borderWidth={12}
-        color="#4f14b5"
-        shadowColor="#9fa8da"
-        bgColor="#fff"
-      >
-        <Text style={{ fontSize: 40 }}>{count}%</Text>
-      </ProgressCircle>
-      <View
-        style={{
-          width: "90%",
-          alignItems: "center",
-          justifyContent: "space-around",
-          flexDirection: "row",
-        }}
-      >
-        <Image
-          style={{ height: 80, width: 80 }}
-          source={langueUtilise[0].image}
-        />
-        <Text style={{ fontSize: 30 }}>{langueUtilise[0].language}</Text>
+    
+      <View style={{width: '70%', height: 130, flexDirection:'row', alignItems:'center', justifyContent: 'center'}}>
+        <View>
+        <ProgressCircle
+          percent={count}
+          radius={60}
+          borderWidth={12}
+          color="#4f14b5"
+          shadowColor="#9fa8da"
+          bgColor="#fff"
+          
+        >
+          <Text style={{ fontSize: 25 }}>{count}%</Text>
+        </ProgressCircle>
+        </View>
+        <View style={{width: '70%', height: 130, alignItems: 'center', justifyContent: 'center'}}>
+          <Image
+            style={{ height: 70, width: 70 }}
+            source={langueUtilise[0].image}
+          />
+          <Text style={{ fontSize: 20 }}>{langueUtilise[0].language}</Text>
+        </View>
       </View>
-    </View>
+    
+    
   );
 }
 

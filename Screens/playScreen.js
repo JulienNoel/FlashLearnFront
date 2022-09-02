@@ -1,16 +1,18 @@
 import React, { useRef, useState, useEffect } from "react";
+import * as Speech from "expo-speech";
 import { connect } from "react-redux";
 import { Animated, Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity } from "react-native";
 import CountdownScreen from "./countown";
 
 
 export function PlayScreen(props) {
-  // fadeAnim will be used as the value for opacity. Initial Value: 0
+  
   const [color1, setColor1] = useState('')
   const [color2, setColor2] = useState('')
   const [word, setWord] = useState('')
   const [randomWord, setRandomWord] = useState('')
   const [wordNbr, setWordNbr] = useState(0)
+  const [traduction, setTraduction] = useState('')
   
 
   const yAnim = useRef(new Animated.Value(0)).current;
@@ -59,6 +61,11 @@ const resetAnimation = () => {
 
   const colorList = ['red','#FC600A','orange','#FCCC1A','brown','#B2D732','green','#347C98','blue','#4424D6','purple','#C21460']
 
+  const speak = () => {
+    const thingToSay = traduction;
+    Speech.speak(thingToSay, { language: props.langue, rate: 0.5, pitch: 0.9 });
+  };
+
 
   useEffect(()=>{ 
     
@@ -84,6 +91,27 @@ const resetAnimation = () => {
      
    },[wordNbr])
 
+   useEffect(() => {
+
+    async function loadTranslate() {
+      var rawResponse = await fetch(
+        "https://translation.googleapis.com/language/translate/v2/",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `q=${word}&target=${props.langue}&format=text&source=fr&modele=base&key=${REACT_APP_KEY}`,
+        }
+      );
+      var response = await rawResponse.json();
+      setTraduction(response.data.translations[0].translatedText.toLowerCase())
+    }
+    loadTranslate()
+    speak()
+
+   },[word])
+
+   
+
 
   const data =[{word: randomWord,
                 color: color1},
@@ -96,11 +124,10 @@ const resetAnimation = () => {
     return <Square key={i} color={el.color} word={el.word} answer={word} isCorrect={isCorrect} animation={yAnim}/>
   })
 
-  
-
   return (
     <SafeAreaView style={styles.container}>
       {displaySquare}
+      <Text style={{fontSize: 20}}>{traduction}</Text>
     </SafeAreaView>
   );
 }

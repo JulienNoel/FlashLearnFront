@@ -25,8 +25,9 @@ export function StatScreen(props) {
     setNbrTotalExercice(response.nbrExercice)
     }
     loadHistorique()
+    console.log('ok')
 
-  }, []);
+  },[]);
 
   
   
@@ -57,7 +58,7 @@ export function StatCircle(props) {
 
       return () => clearInterval(timer);
     }
-  }, [count, pourcentageValue]);
+  }, [count]);
 
 
 

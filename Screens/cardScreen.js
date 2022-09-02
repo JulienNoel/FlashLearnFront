@@ -17,8 +17,8 @@ import {
 import { FontAwesome } from "@expo/vector-icons";
 import RecordScreen from "./recordScreen";
 import { REACT_APP_KEY } from "@env";
-import * as Notifications from 'expo-notifications';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Notifications from "expo-notifications";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import useLanguage from "../hooks/useLanguage";
 
 Notifications.setNotificationHandler({
@@ -30,125 +30,105 @@ Notifications.setNotificationHandler({
 });
 
 export function CardScreen(props) {
-  
   const [traduction, setTraduction] = useState(null);
   const [wordNumber, setWordNumber] = useState(0);
   const [listExe, setListExe] = useState([]);
   const [exerciceNbr, setExerciceNbr] = useState(1);
   const [transcripted, setTranscripted] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [isFinished, setIsFinished] = useState(false)
-  const [notifTxt, setNotifTxt] = useState([])
-  const [filtreExercice, setFiltreExercice] = useState([])
-  
-  
-  
+  const [isFinished, setIsFinished] = useState(false);
+  const [notifTxt, setNotifTxt] = useState([]);
+  const [filtreExercice, setFiltreExercice] = useState([]);
 
   async function createUser() {
+    var rawResponse = await fetch(
+      `https://flashlearnapp.herokuapp.com/createUser`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `exercice=${exerciceNbr}&language=${props.langue}`,
+      }
+    );
+    var response = await rawResponse.json();
+    var token = response.user.token;
 
-      var rawResponse = await fetch(
-        `https://flashlearnapp.herokuapp.com/createUser`,{
-          method: 'POST',
-          headers: {'Content-Type':'application/x-www-form-urlencoded'},
-          body: `exercice=${exerciceNbr}&language=${props.langue}`
-         }
-      );
-      var response = await rawResponse.json();
-      var token = response.user.token;
-      
-      if (response.result) {
-        AsyncStorage.setItem("token", token)
-        props.addToken(token)
-      }         
-
+    if (response.result) {
+      AsyncStorage.setItem("token", token);
+      props.addToken(token);
     }
-
+  }
 
   useEffect(() => {
-      setListExe(props.exo[0]);
-      async function loadExerciceHistory() {
-
-      if (props.token) { 
-      var rawResponse = await fetch(
-        `https://flashlearnapp.herokuapp.com/exercicefind/${props.token}/${props.langue}`,
-        
-      );
-      var response = await rawResponse.json();
-      response.result && setExerciceNbr(response.user[0].nbrExercice+1)
-      
-    }
+    setListExe(props.exo[0]);
+    async function loadExerciceHistory() {
+      if (props.token) {
+        var rawResponse = await fetch(
+          `https://flashlearnapp.herokuapp.com/exercicefind/${props.token}/${props.langue}`
+        );
+        var response = await rawResponse.json();
+        response.result && setExerciceNbr(response.user[0].nbrExercice + 1);
       }
-      loadExerciceHistory()
-    
+    }
+    loadExerciceHistory();
   }, []);
 
   useEffect(() => {
-    
     let triExercice = listExe.filter((e) => e.exerciceId == exerciceNbr);
-    setFiltreExercice(triExercice[0])
-         
-    
-}, [exerciceNbr]);
+    setFiltreExercice(triExercice[0]);
+  }, [exerciceNbr]);
 
   useEffect(() => {
-    
-
-      async function recordExerciceHistory() {
-        if (props.token) {
+    async function recordExerciceHistory() {
+      if (props.token) {
         var rawResponse = await fetch(
-          `https://flashlearnapp.herokuapp.com/exercicerecord`,{
-            method: 'PUT',
-            headers: {'Content-Type':'application/x-www-form-urlencoded'},
-            body: `exercice=${exerciceNbr+1}&language=${props.langue}&token=${props.token}`
-           });
-                 
+          `https://flashlearnapp.herokuapp.com/exercicerecord`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `exercice=${exerciceNbr + 1}&language=${props.langue}&token=${
+              props.token
+            }`,
+          }
+        );
+
         var response = await rawResponse.json();
-        
-        }
+      }
     }
-    recordExerciceHistory()
+    recordExerciceHistory();
+  }, [exerciceNbr]);
 
-}, [exerciceNbr]);
+  let exerciceListFR = [];
 
-
-let exerciceListFR = [];  
-
-for (let word in filtreExercice) {
-exerciceListFR.push(filtreExercice[word]);
-}
-exerciceListFR.splice(0,1);
+  for (let word in filtreExercice) {
+    exerciceListFR.push(filtreExercice[word]);
+  }
+  exerciceListFR.splice(0, 1);
 
   useEffect(() => {
     async function loadTranslate() {
-
-      
-        var rawResponse = await fetch(
-          "https://translation.googleapis.com/language/translate/v2/",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `q=${exerciceListFR[wordNumber]}&target=${props.langue}&format=text&source=fr&modele=base&key=${REACT_APP_KEY}`,
-          }
-        );
-        var response = await rawResponse.json();
-        
-        if (exerciceListFR[wordNumber]) {
-          setTraduction(response.data.translations[0].translatedText.toLowerCase())
+      var rawResponse = await fetch(
+        "https://translation.googleapis.com/language/translate/v2/",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `q=${exerciceListFR[wordNumber]}&target=${props.langue}&format=text&source=fr&modele=base&key=${REACT_APP_KEY}`,
         }
-          
-      
+      );
+      var response = await rawResponse.json();
+
+      if (exerciceListFR[wordNumber]) {
+        setTraduction(
+          response.data.translations[0].translatedText.toLowerCase()
+        );
       }
+    }
     loadTranslate();
-      
   }, [wordNumber, filtreExercice]);
 
-console.log(traduction)
-console.log(exerciceListFR)
 
-  const timeInterval = [600,86400,172800,604800] 
-  const timeIntervalTest = [2,6,15]
-  
-  
+  const timeInterval = [600, 86400, 172800, 604800];
+  const timeIntervalTest = [2, 6, 15];
+
   const recordTranscription = (transcription) => {
     console.log("transcription", transcription);
     setTranscripted(transcription);
@@ -159,94 +139,81 @@ console.log(exerciceListFR)
     Speech.speak(thingToSay, { language: props.langue, rate: 0.5, pitch: 0.9 });
   };
 
-  
-  let filtreLanguage = useLanguage(props.langue)
+  let filtreLanguage = useLanguage(props.langue);
 
   let resultTranscription;
   if (transcripted == traduction) {
     resultTranscription = <Text>Bravo</Text>;
   }
 
-
-
-  let tradList = notifTxt.filter(el => el != null)
+  let tradList = notifTxt.filter((el) => el != null);
   let recapNotif = exerciceListFR.reduce((acc, el, i) => {
-    return [...acc, {fr: el, trad: tradList[i]}]
-  }, [])
-  
- 
-  let displayNotif = ''
+    return [...acc, { fr: el, trad: tradList[i] }];
+  }, []);
+
+  let displayNotif = "";
 
   for (const element of recapNotif) {
-    displayNotif += `FR: ${element.fr} ${props.langue.toUpperCase()}: ${element.trad}\n`
+    displayNotif += `FR: ${element.fr} ${props.langue.toUpperCase()}: ${
+      element.trad
+    }\n`;
   }
 
-  
-
   async function schedulePushNotification(time) {
-    
-  
     await Notifications.scheduleNotificationAsync({
       content: {
         title: "🔍 Rappel FlashLearn !",
-        body: `${displayNotif}`        
+        body: `${displayNotif}`,
       },
-      trigger: { seconds: time}
-      
+      trigger: { seconds: time },
     });
-    
   }
 
-  exerciceNbr > 25 && setExerciceNbr(1)
+  exerciceNbr > 25 && setExerciceNbr(1);
 
   const exerciceCount = () => {
-    
-    setWordNumber(wordNumber + 1);    
-    setNotifTxt(arr => {
-      return [...arr, traduction]
-    })
-    
+    setWordNumber(wordNumber + 1);
+    setNotifTxt((arr) => {
+      return [...arr, traduction];
+    });
+
     if (wordNumber == 4) {
       setModalVisible(true);
-      setIsFinished(true)
-      setWordNumber(4)
-      !props.token && createUser()
+      setIsFinished(true);
+      setWordNumber(4);
+      !props.token && createUser();
+    }
+  };
 
-      }         
-    }    
-    
-  const exerciceFinished = () => {
-      setModalVisible(!modalVisible)      
-      setWordNumber(0)
-      props.navigation.navigate('game') 
-    
-      for (let timeSetting of timeIntervalTest) {
-        schedulePushNotification(timeSetting)
-      }
-      setNotifTxt([])
-  }
-
-  const exerciceContinue = () => {
-    setModalVisible(!modalVisible)
-    setExerciceNbr(exerciceNbr + 1)
-    setWordNumber(0)
-     
-  
-    for (let timeSetting of timeIntervalTest) {
-      schedulePushNotification(timeSetting)
+  function sendNotification () {
+    for (let timeSetting of timeInterval) {
+      schedulePushNotification(timeSetting);
     }
     setNotifTxt([])
-}
-  
- 
-  let displayTrad;
-  
-  if (exerciceListFR[wordNumber] == null ) {
-    displayTrad = <ActivityIndicator size="large" color="#9fa8da" />;
-  } else {
-    displayTrad = traduction
   }
 
+  const exerciceFinished = () => {
+    setModalVisible(!modalVisible);
+    setWordNumber(0);
+    props.navigation.navigate("game");
+    sendNotification()
+    
+  };
+
+  const exerciceContinue = () => {
+    setModalVisible(!modalVisible);
+    setExerciceNbr(exerciceNbr + 1);
+    setWordNumber(0);
+    sendNotification()
+  };
+
+  let displayTrad;
+
+  if (exerciceListFR[wordNumber] == null) {
+    displayTrad = <ActivityIndicator size="large" color="#9fa8da" />;
+  } else {
+    displayTrad = traduction;
+  }
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -260,13 +227,15 @@ console.log(exerciceListFR)
           borderColor: "lightgray",
         }}
       >
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <FontAwesome
-            name="volume-up"
-            size={40}
-            color="black"
-            onPress={speak}
-          />
+        <View style={{ alignItems: "center", justifyContent: "center" }}>
+          <TouchableOpacity>
+            <FontAwesome
+              name="volume-up"
+              size={40}
+              color="black"
+              onPress={speak}
+            />
+          </TouchableOpacity>
         </View>
         <View
           style={{
@@ -274,7 +243,6 @@ console.log(exerciceListFR)
             alignItems: "center",
           }}
         >
-        
           <View style={{ marginRight: 15, marginLeft: 15 }}>
             <Image
               style={{ height: 60, width: 60 }}
@@ -284,7 +252,7 @@ console.log(exerciceListFR)
           </View>
           <Text style={{ fontSize: 28, marginBottom: 20 }}>{displayTrad}</Text>
         </View>
-        
+
         <View
           style={{
             flexDirection: "row",
@@ -313,7 +281,6 @@ console.log(exerciceListFR)
           justifyContent: "space-evenly",
         }}
       >
-       
         <View>
           <TouchableOpacity>
             <FontAwesome
@@ -372,14 +339,18 @@ function mapDispatchToProps(dispatch) {
     addExercice: function (exe) {
       dispatch({ type: "addExercice", exercice: exe });
     },
-    addToken: function(token) {
-      dispatch({ type: 'addToken', token: token})
-    }
+    addToken: function (token) {
+      dispatch({ type: "addToken", token: token });
+    },
   };
 }
 
 function mapStateToProps(state) {
-  return { langue: state.languageSelect, exo: state.exercice, token: state.token };
+  return {
+    langue: state.languageSelect,
+    exo: state.exercice,
+    token: state.token,
+  };
 }
 
 const styles = StyleSheet.create({

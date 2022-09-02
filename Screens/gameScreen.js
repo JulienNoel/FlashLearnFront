@@ -6,15 +6,17 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  Image
 } from "react-native";
 import { Card, Icon } from "@rneui/themed";
 import { LinearGradient } from "expo-linear-gradient";
+import useLanguage from "../hooks/useLanguage";
 
 export function GameScreen(props) {
   const [exerciceList, setExerciceList] = useState([]);
   const [exerciceNbr, setExerciceNbr] = useState(0)
 
-  
+  const langueUtilise = useLanguage(props.langue)
 
  
 
@@ -48,9 +50,18 @@ export function GameScreen(props) {
 
   return (
     
-    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
+    <View>
+    
+      <View style={{alignItems: 'center', justifyContent: 'center', marginTop: 45, marginBottom: 10}}>
+      <Image
+            style={{ height: 70, width: 70 }}
+            source={langueUtilise[0].image}
+          />
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
       <View style={styles.container}>{exerciceList && displayExercice}</View>
     </ScrollView>
+    </View>
   );
 }
 
@@ -97,7 +108,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     flexWrap: "wrap",
-    marginTop: "15%",
+    marginBottom: 100,
     justifyContent: "center",
     
   },

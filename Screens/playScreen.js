@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import * as Speech from "expo-speech";
 import { connect } from "react-redux";
 import { Animated, Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity } from "react-native";
-import CountdownScreen from "./countown";
+import { REACT_APP_KEY } from "@env";
 
 
 export function PlayScreen(props) {
@@ -13,6 +13,7 @@ export function PlayScreen(props) {
   const [randomWord, setRandomWord] = useState('')
   const [wordNbr, setWordNbr] = useState(0)
   const [traduction, setTraduction] = useState('')
+  const [motsExercice, setMotsExercice] = useState([])
   
 
   const yAnim = useRef(new Animated.Value(0)).current;
@@ -51,45 +52,54 @@ const resetAnimation = () => {
     .reduce(function(prev, curr) {
       return [...prev, curr.w1, curr.w2, curr.w3, curr.w4, curr.w5 ]
     },[])
-    .sort(() => Math.random() - 0.5)
+    
   }
 
-  function isCorrect (boolean) {
+  function handleIsCorrect (boolean) {
+    console.log(boolean)
     boolean? setWordNbr(wordNbr+1) : props.navigation.navigate('stat')
     resetAnimation()
   }
 
+  function randColor() {      
+    return colorList[shuffle(colorList)];
+  }
+
   const colorList = ['red','#FC600A','orange','#FCCC1A','brown','#B2D732','green','#347C98','blue','#4424D6','purple','#C21460']
+   
 
-  const speak = () => {
-    const thingToSay = traduction;
-    Speech.speak(thingToSay, { language: props.langue, rate: 0.5, pitch: 0.9 });
-  };
+  useEffect(()=>{ 
 
+  let filteredExercice = props.exo[0].filter(e => e.exerciceId == props.route.params.numeroExercice) 
+                                     
+  let selectedExerciceArr = misEnFormeArray(filteredExercice).sort(() => Math.random() - 0.5)
+  
+  setMotsExercice(selectedExerciceArr)
+
+  },[])
+
+  
+  
 
   useEffect(()=>{ 
     
     let listWordsFR = misEnFormeArray(props.exo[0])      
     setRandomWord(listWordsFR[shuffle(listWordsFR)].toUpperCase())
+    setColor1(randColor)
+    setColor2(randColor)
+
+    if (motsExercice.length >0) {
+
+      setWord(motsExercice[wordNbr].toUpperCase())
+
+    }
+     
     
-    let filteredExercice = props.exo[0].filter(e => e.exerciceId == props.route.params.numeroExercice)
-                                        
-    let selectedExerciceArr = misEnFormeArray(filteredExercice)
-    
-    setWord(selectedExerciceArr[wordNbr].toUpperCase())
+   },[wordNbr, motsExercice])
 
-    const randColor = () =>  {      
-      return colorList[shuffle(colorList)];
-  }
-
-  setColor1(randColor)
-  setColor2(randColor)
-
-  if (color1 === color2) {
+   if (color1 === color2) {
     setColor2(randColor)
   }
-     
-   },[wordNbr])
 
    useEffect(() => {
 
@@ -103,15 +113,26 @@ const resetAnimation = () => {
         }
       );
       var response = await rawResponse.json();
-      setTraduction(response.data.translations[0].translatedText.toLowerCase())
+      setTraduction(response.data.translations[0].translatedText)
+      
     }
+    
     loadTranslate()
-    speak()
+    
 
    },[word])
 
    
+useEffect(() => {
 
+  const speak = () => {
+    const thingToSay = traduction;
+    Speech.speak(thingToSay, { language: props.langue, rate: 0.5, pitch: 0.9 });
+  };
+  speak()
+
+},[traduction])
+   
 
   const data =[{word: randomWord,
                 color: color1},
@@ -121,14 +142,18 @@ const resetAnimation = () => {
 
   
   let displaySquare = data.map((el,i) => {
-    return <Square key={i} color={el.color} word={el.word} answer={word} isCorrect={isCorrect} animation={yAnim}/>
+    return <Square key={i} color={el.color} word={el.word} answer={word} isCorrect={handleIsCorrect} animation={yAnim}/>
   })
 
   return (
+    
+      
     <SafeAreaView style={styles.container}>
+      
       {displaySquare}
-      <Text style={{fontSize: 20}}>{traduction}</Text>
+      
     </SafeAreaView>
+    
   );
 }
 
@@ -136,6 +161,7 @@ export function Square(props) {
 
 
 function handleClick() {
+  console.log('clic')
   props.answer === props.word? props.isCorrect(true) : props.isCorrect(false)
   
   }

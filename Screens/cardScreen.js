@@ -143,7 +143,7 @@ export function CardScreen(props) {
 
   let resultTranscription;
   if (transcripted == traduction) {
-    resultTranscription = <Text>Bravo</Text>;
+    resultTranscription = <Text>Excellente prononciation!</Text>;
   }
 
   let tradList = notifTxt.filter((el) => el != null);

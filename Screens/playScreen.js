@@ -1,8 +1,9 @@
 import React, { useRef, useState, useEffect } from "react";
 import * as Speech from "expo-speech";
 import { connect } from "react-redux";
-import { Animated, Text, View, StyleSheet, Button, SafeAreaView, TouchableOpacity } from "react-native";
+import { Animated, Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { REACT_APP_KEY } from "@env";
+
 
 
 export function PlayScreen(props) {
@@ -56,10 +57,11 @@ const resetAnimation = () => {
   }
 
   function handleIsCorrect (boolean) {
-    console.log(boolean)
-    boolean? setWordNbr(wordNbr+1) : props.navigation.navigate('stat')
+    
+    wordNbr < 4 && boolean? setWordNbr(wordNbr+1) : props.navigation.navigate('stat')
     resetAnimation()
   }
+  console.log(wordNbr)
 
   function randColor() {      
     return colorList[shuffle(colorList)];
@@ -85,21 +87,19 @@ const resetAnimation = () => {
     
     let listWordsFR = misEnFormeArray(props.exo[0])      
     setRandomWord(listWordsFR[shuffle(listWordsFR)].toUpperCase())
-    setColor1(randColor)
-    setColor2(randColor)
-
-    if (motsExercice.length >0) {
+        
+    if (motsExercice.length >0 ) {
 
       setWord(motsExercice[wordNbr].toUpperCase())
+      setColor1(randColor)
+      setColor2(randColor)
 
     }
-     
+    
     
    },[wordNbr, motsExercice])
 
-   if (color1 === color2) {
-    setColor2(randColor)
-  }
+   
 
    useEffect(() => {
 
@@ -132,7 +132,10 @@ useEffect(() => {
   speak()
 
 },[traduction])
-   
+  
+if (color1 === color2) {
+  setColor2(randColor)
+}
 
   const data =[{word: randomWord,
                 color: color1},
@@ -145,14 +148,21 @@ useEffect(() => {
     return <Square key={i} color={el.color} word={el.word} answer={word} isCorrect={handleIsCorrect} animation={yAnim}/>
   })
 
+  
+
+
   return (
     
+    <View> 
+      <View style={styles.container}>      
+        {displaySquare}
+      </View>    
+      <View style={styles.text}>
+        <Text style={{fontSize: 35}}>{traduction}</Text>
+      </View>
       
-    <SafeAreaView style={styles.container}>
-      
-      {displaySquare}
-      
-    </SafeAreaView>
+    </View>
+    
     
   );
 }
@@ -167,7 +177,9 @@ function handleClick() {
   }
 
   return (
-    <TouchableOpacity onPress={handleClick}>
+
+    
+    
       <Animated.View
         style={[
           { backgroundColor: props.color },
@@ -181,6 +193,7 @@ function handleClick() {
           },
         ]}
       >
+      <TouchableOpacity onPress={handleClick}>
         <View
           style={{
             width: "100%",
@@ -193,8 +206,10 @@ function handleClick() {
             {props.word}
           </Text>
         </View>
+        </TouchableOpacity>
       </Animated.View>
-    </TouchableOpacity>
+    
+    
   );
 }
 
@@ -213,6 +228,13 @@ const styles = StyleSheet.create({
     width : 135,
     height: 135,
     borderRadius: 10
+  },
+  text:{
+    height: '100%',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',    
+    zIndex: -1
   }  
   
 });

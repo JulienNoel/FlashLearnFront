@@ -2,6 +2,10 @@ import React from 'react'
 import {Provider} from 'react-redux';
 import {createStore, combineReducers}  from 'redux';
 
+import { LogBox } from "react-native";
+
+LogBox.ignoreAllLogs();
+
 import languageSelect from './reducers/language.reducer'
 import exercice from './reducers/exercice.reducer'
 import token from './reducers/token.reducer'

@@ -67,7 +67,6 @@ export function GameScreen(props) {
 
 export function Cards(props) {
 
-  console.log(props.isUnlock)
 
   function goToGame() {
     if (!(props.isUnlock < props.exercice)) {

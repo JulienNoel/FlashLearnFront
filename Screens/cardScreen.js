@@ -119,6 +119,7 @@ export function CardScreen(props) {
           body: `q=${exerciceListFR[wordNumber]}&target=${props.langue}&format=text&source=fr&modele=base&key=${REACT_APP_KEY}`,
         }
       );
+      
       var response = await rawResponse.json();
 
       if (exerciceListFR[wordNumber]) {

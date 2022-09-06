@@ -73,8 +73,13 @@ export function CardScreen(props) {
   }, []);
 
   useEffect(() => {
+    if (listExe.length > 0) {
+
     let triExercice = listExe.filter((e) => e.exerciceId == exerciceNbr);
     setFiltreExercice(triExercice[0]);
+
+    }
+    
   }, [exerciceNbr]);
 
   useEffect(() => {

@@ -36,7 +36,6 @@ export function CardScreen(props) {
   const [exerciceNbr, setExerciceNbr] = useState(1);
   const [transcripted, setTranscripted] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [isFinished, setIsFinished] = useState(false);
   const [notifTxt, setNotifTxt] = useState([]);
   const [filtreExercice, setFiltreExercice] = useState([]);
 
@@ -58,6 +57,23 @@ export function CardScreen(props) {
     }
   }
 
+  async function recordExerciceHistory() {
+      
+    var rawResponse = await fetch(
+      `https://flashlearnapp.herokuapp.com/exercicerecord`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `exercice=${exerciceNbr}&language=${props.langue}&token=${
+          props.token
+        }`,
+      }
+    );
+
+    var response = await rawResponse.json();
+    console.log(response.user.historique)
+}
+
   useEffect(() => {
     setListExe(props.exo[0]);
     async function loadExerciceHistory() {
@@ -66,11 +82,12 @@ export function CardScreen(props) {
           `https://flashlearnapp.herokuapp.com/exercicefind/${props.token}/${props.langue}`
         );
         var response = await rawResponse.json();
-        response.result && setExerciceNbr(response.user[0].nbrExercice + 1);
+        response.result && setExerciceNbr(response.user[0].nbrExercice+1);
       }
     }
     loadExerciceHistory();
   }, []);
+  console.log(exerciceNbr)
 
   useEffect(() => {
     if (listExe.length > 0) {
@@ -81,26 +98,7 @@ export function CardScreen(props) {
     }
     
   }, [exerciceNbr]);
-
-  useEffect(() => {
-    async function recordExerciceHistory() {
-      if (props.token) {
-        var rawResponse = await fetch(
-          `https://flashlearnapp.herokuapp.com/exercicerecord`,
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `exercice=${exerciceNbr + 1}&language=${props.langue}&token=${
-              props.token
-            }`,
-          }
-        );
-
-        var response = await rawResponse.json();
-      }
-    }
-    recordExerciceHistory();
-  }, [exerciceNbr]);
+      
 
   let exerciceListFR = [];
 
@@ -133,7 +131,7 @@ export function CardScreen(props) {
 
 
   const timeInterval = [600, 86400, 172800, 604800];
-  const timeIntervalTest = [2, 6, 15];
+  //const timeIntervalTest = [2, 6, 15];
 
   const recordTranscription = (transcription) => {
     console.log("transcription", transcription);
@@ -184,8 +182,7 @@ export function CardScreen(props) {
     });
 
     if (wordNumber == 4) {
-      setModalVisible(true);
-      setIsFinished(true);
+      setModalVisible(true);      
       setWordNumber(4);
       !props.token && createUser();
     }
@@ -202,15 +199,17 @@ export function CardScreen(props) {
     setModalVisible(!modalVisible);
     setWordNumber(0);
     props.navigation.navigate("game");
-    sendNotification()
+    sendNotification();
+    recordExerciceHistory()
     
   };
 
   const exerciceContinue = () => {
     setModalVisible(!modalVisible);
-    setExerciceNbr(exerciceNbr + 1);
+    setExerciceNbr(exerciceNbr+1);
     setWordNumber(0);
     sendNotification()
+
   };
 
   let displayTrad;

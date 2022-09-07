@@ -2,7 +2,6 @@ import React from "react";
 import { connect } from "react-redux";
 import { useState, useEffect } from "react";
 import {
-  StyleSheet,
   Text,
   View,
   TouchableOpacity,
@@ -59,8 +58,8 @@ export function HomeScreen(props) {
     },
   ];
 
-  count < 0 && setCount(listLangues.length - 1);
-  count > listLangues.length - 1 && setCount(0);
+  count < 0 && setCount(listLangues.length-1);
+  count > listLangues.length-1 && setCount(0);
 
   useEffect(() => {
     const settings = function (c) {

@@ -5,31 +5,28 @@ import {
   Text,
   View,
   ScrollView,
-  TouchableOpacity,
   Image
 } from "react-native";
-import { Card, Icon } from "@rneui/themed";
+import { Icon } from "@rneui/themed";
 import { LinearGradient } from "expo-linear-gradient";
 import useLanguage from "../hooks/useLanguage";
+import useRefresh from "../hooks/useRefresh";
 
 export function GameScreen(props) {
   const [exerciceList, setExerciceList] = useState([]);
   const [exerciceNbr, setExerciceNbr] = useState(0)
-
+  
   const langueUtilise = useLanguage(props.langue)
-
+  const refresh = useRefresh()
+ 
  
 
   useEffect(() => {
     setExerciceList(props.exo[0]);
-         
-  }, []);
-
-  useEffect(() => {
-
+    if (props.token) {
     async function loadExerciceHistory() {
 
-    if (props.token) { 
+     
     var rawResponse = await fetch(
       `https://flashlearnapp.herokuapp.com/exercicefind/${props.token}/${props.langue}`,
       
@@ -38,10 +35,10 @@ export function GameScreen(props) {
     response.result? setExerciceNbr(response.user[0].nbrExercice) : setExerciceNbr(0)
     
   }
-    }
-    loadExerciceHistory()
+  loadExerciceHistory()
+    }    
   
-}, [props.langue]);
+},[refresh]);
 
   let displayExercice = exerciceList.map((el, i) => {
     return <Cards exercice={el.exerciceId} key={i} navigation={props.navigation} isUnlock={exerciceNbr}/>;
@@ -71,6 +68,7 @@ export function Cards(props) {
   function goToGame() {
     if (!(props.isUnlock < props.exercice)) {
       props.navigation.navigate("countdown", {numeroExercice: props.exercice})
+      
     }
   }
 

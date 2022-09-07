@@ -1,11 +1,11 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { useState } from "react";
+import { View, TouchableOpacity } from "react-native";
 import { Audio } from "expo-av";
 import { FontAwesome } from "@expo/vector-icons";
 
 import { connect } from "react-redux";
-import { getNativeSourceAndFullInitialStatusForLoadAsync } from "expo-av/build/AV";
+
 
 export function RecordScreen(props) {
   

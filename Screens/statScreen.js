@@ -3,36 +3,38 @@ import { connect } from "react-redux";
 
 import ProgressCircle from "react-native-progress-circle";
 import useLanguage from "../hooks/useLanguage";
+import useRefresh from "../hooks/useRefresh";
 
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import { Text, View, Image } from "react-native";
+
 
 export function StatScreen(props) {
   
   const [historique, setHistorique] = useState([])
   const [nbrTotalExercice, setNbrTotalExercice] = useState(0)
-    
+  const refresh = useRefresh()
 
-  useEffect(() => {
-    
-    async function loadHistorique() {
 
-    var rawResponse = await fetch(
-      `https://flashlearnapp.herokuapp.com/historique/${props.token}`,
-      
-    );
-    var response = await rawResponse.json();
-    setHistorique(response.result)
-    setNbrTotalExercice(response.nbrExercice)
-    }
-    loadHistorique()
-    console.log('ok')
+  useEffect(() => {   
 
-  },[]);
+        async function loadHistorique() {
+
+        var rawResponse = await fetch(
+          `https://flashlearnapp.herokuapp.com/historique/${props.token}`,
+          
+        );
+        var response = await rawResponse.json();
+        setHistorique(response.result)
+        setNbrTotalExercice(response.nbrExercice)
+        }
+        loadHistorique()
+   
+  },[refresh]);
 
   
   
   let displayCircles = historique.map((el, i) => {
-    return <StatCircle key={i} lang={el.langue} exeDone={el.nbrExercice} totalExercice={nbrTotalExercice}/>
+    return <StatCircle key={i} lang={el.langue} exeDone={el.nbrExercice} totalExercice={nbrTotalExercice} refresh={refresh}/>
   })
 
   
@@ -47,10 +49,12 @@ export function StatScreen(props) {
 export function StatCircle(props) {
 
   const [count, setCount] = useState(0);
-  let pourcentageValue = Math.floor(props.exeDone/props.totalExercice*100);
+  let pourcentageValue = Math.floor(props.exeDone/props.totalExercice*100)
   const langueUtilise = useLanguage(props.lang)
 
+
   useEffect(() => {
+    
     if (count < pourcentageValue) {
       const timer = setInterval(() => {
         setCount(count + 1);
@@ -58,7 +62,7 @@ export function StatCircle(props) {
 
       return () => clearInterval(timer);
     }
-  }, [count]);
+  }, [count, props.refresh]);
 
 
 

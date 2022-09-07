@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import { StyleSheet, Text, View, Image, Animated } from 'react-native';
+import { StyleSheet, Image, Animated } from 'react-native';
 
 export function StartScreen (props) {
 

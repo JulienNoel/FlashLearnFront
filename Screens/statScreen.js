@@ -12,7 +12,7 @@ export function StatScreen(props) {
   
   const [historique, setHistorique] = useState([])
   const [nbrTotalExercice, setNbrTotalExercice] = useState(0)
-  const refresh = useRefresh()
+  const refreshStat = useRefresh()
 
 
   useEffect(() => {   
@@ -29,12 +29,12 @@ export function StatScreen(props) {
         }
         loadHistorique()
    
-  },[refresh]);
+  },[refreshStat]);
 
   
   
   let displayCircles = historique.map((el, i) => {
-    return <StatCircle key={i} lang={el.langue} exeDone={el.nbrExercice} totalExercice={nbrTotalExercice} refresh={refresh}/>
+    return <StatCircle key={i} lang={el.langue} exeDone={el.nbrExercice} totalExercice={nbrTotalExercice} refresh={refreshStat}/>
   })
 
   
@@ -60,9 +60,12 @@ export function StatCircle(props) {
         setCount(count + 1);
       }, 1);
 
-      return () => clearInterval(timer);
+    return () => {
+        clearInterval(timer)
+        
     }
-  }, [count, props.refresh]);
+  }
+}, [count, props.refresh]);
 
 
 

@@ -20,7 +20,7 @@ export default function CountdownScreen(props) {
       
       return () => clearInterval(timer); 
     }else {
-      //setCount(0)
+      
       setColor('seagreen')
       const timer2 = setTimeout(() =>{ 
         props.navigation.navigate('play',{numeroExercice: props.route.params.numeroExercice})

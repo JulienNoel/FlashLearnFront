@@ -17,7 +17,7 @@ export function GameScreen(props) {
   const [exerciceNbr, setExerciceNbr] = useState(0)
   
   const langueUtilise = useLanguage(props.langue)
-  const refresh = useRefresh()
+  const refreshGame = useRefresh()
  
  
 
@@ -32,13 +32,12 @@ export function GameScreen(props) {
       
     );
     var response = await rawResponse.json();
-    response.result? setExerciceNbr(response.user[0].nbrExercice) : setExerciceNbr(0)
-    
+    response.result? setExerciceNbr(response.user[0].nbrExercice) : setExerciceNbr(0)    
   }
   loadExerciceHistory()
     }    
   
-},[refresh]);
+},[refreshGame]);
 
   let displayExercice = exerciceList.map((el, i) => {
     return <Cards exercice={el.exerciceId} key={i} navigation={props.navigation} isUnlock={exerciceNbr}/>;

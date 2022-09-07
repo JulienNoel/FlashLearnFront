@@ -7,7 +7,6 @@ import {
   View,
   Image,
   StyleSheet,
-  Button,
   TouchableOpacity,
   ActivityIndicator,
   Modal,
@@ -38,6 +37,7 @@ export function CardScreen(props) {
   const [modalVisible, setModalVisible] = useState(false);
   const [notifTxt, setNotifTxt] = useState([]);
   const [filtreExercice, setFiltreExercice] = useState([]);
+  const [isComplete, setIsComplete] = useState(false)
 
   async function createUser() {
     var rawResponse = await fetch(
@@ -45,7 +45,7 @@ export function CardScreen(props) {
       {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `exercice=${exerciceNbr}&language=${props.langue}`,
+        body: `exercice=${exerciceNbr}&language=${props.langue}&isComplete=${isComplete}`,
       }
     );
     var response = await rawResponse.json();
@@ -65,8 +65,7 @@ export function CardScreen(props) {
         method: "PUT",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `exercice=${exerciceNbr}&language=${props.langue}&token=${
-          props.token
-        }`,
+          props.token}&isComplete=${isComplete}`,
       }
     );
 
@@ -87,7 +86,7 @@ export function CardScreen(props) {
     }
     loadExerciceHistory();
   }, []);
-  console.log(exerciceNbr)
+  
 
   useEffect(() => {
     if (listExe.length > 0) {
@@ -173,7 +172,10 @@ export function CardScreen(props) {
     });
   }
 
-  exerciceNbr > 25 && setExerciceNbr(1);
+  if (exerciceNbr > 25) {
+    setExerciceNbr(1)
+    setIsComplete(true)
+  }  
 
   const exerciceCount = () => {
     setWordNumber(wordNumber + 1);
